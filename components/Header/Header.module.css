@@ -1,0 +1,92 @@
+.headerWrapper {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--border); /* якщо є в макеті */
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 68px;
+}
+
+.logo {
+  display: flex;
+  justify-self: start;
+}
+
+.nav,
+.navigation,
+.navigation li {
+  height: 100%;
+}
+
+.navigation {
+  display: flex;
+  gap: 24px;
+}
+
+.navigationLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.navigationLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.navigationLink:hover,
+.navigationLink[aria-current="page"] {
+  color: var(--accent);
+}
+
+.navigationLink[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 8px 24px;
+  border: 1.4px solid var(--accent);
+  border-radius: 8px;
+  background-color: var(--white);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--accent);
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.actionBtn:hover {
+  background-color: var(--accent);
+  color: var(--white);
+}

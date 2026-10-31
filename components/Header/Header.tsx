@@ -19,12 +19,12 @@ const Header = () => {
   return (
     <header className={css.headerWrapper}>
       <div className={`container ${css.header}`}>
-        <Link href="/" aria-label="Green Tasty — home" className={css.logo}>
+        <Link href="/" aria-label="Family Rest — home" className={css.logo}>
           <Image
             src="/image/Logo.svg"
-            alt="Green Tasty"
-            width={100}
-            height={36}
+            alt="Family Rest"
+            width={142}
+            height={38}
             priority
           />
         </Link>

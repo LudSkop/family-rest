@@ -1,0 +1,132 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-soft);
+}
+
+/* ===== Mobile: текст, під ним картинка ===== */
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-top: 40px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.08333;
+  color: var(--text);
+}
+
+.subtitle {
+  margin-bottom: 32px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.71429;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/*
+ * Композиція з двох мисок (координати з фрейму Figma 1440):
+ * блок 819×370, ліва миска попереду, права позаду й трохи вище.
+ * Відсотки дають однакову композицію на всіх ширинах.
+ */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 819 / 370;
+  pointer-events: none;
+}
+
+.saladFront,
+.saladBack {
+  position: absolute;
+  height: auto;
+}
+
+.saladFront {
+  z-index: 1;
+  top: -10%;
+  left: 0;
+  width: 64.96%;
+}
+
+.saladBack {
+  top: -28.65%;
+  left: 38.95%;
+  width: 68.38%;
+}
+
+@media (min-width: 375px) {
+  .title {
+    font-size: 32px;
+  }
+}
+
+/* ===== Tablet: як desktop — текст ліворуч, миски праворуч ===== */
+@media (min-width: 768px) {
+  .inner {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    height: 300px;
+    padding-top: 0;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Блок з мисками: відступ від правого краю контейнера і розмір */
+  .imageWrapper {
+    position: absolute;
+    top: 70px;
+    right: 44px;
+    width: 340px;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 1440px) {
+  .inner {
+    height: 400px;
+  }
+
+  .content {
+    width: 613px;
+  }
+
+  .title {
+    font-size: 48px;
+  }
+
+  .imageWrapper {
+    top: 40px;
+    right: 96px;
+    width: 819px;
+  }
+}

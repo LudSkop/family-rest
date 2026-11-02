@@ -1,0 +1,39 @@
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 8px 24px;
+  border: 1.4px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.primary {
+  background: linear-gradient(270.63deg, var(--accent) 0.48%, var(--accent-dark) 97.4%);
+  color: var(--white);
+}
+
+/* Градієнт не анімується, тому на hover просто темніший суцільний колір */
+.primary:hover {
+  background: var(--accent-dark);
+}
+
+.secondary {
+  border-color: var(--accent);
+  background-color: var(--white);
+  color: var(--accent);
+}
+
+.secondary:hover {
+  background-color: var(--accent);
+  color: var(--white);
+}

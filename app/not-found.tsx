@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import ButtonLink from "@/components/ButtonLink/ButtonLink";
 import css from "./not-found.module.css";
 
 export const metadata: Metadata = {
@@ -36,12 +36,10 @@ export default function NotFound() {
         </p>
 
         <div className={css.actions}>
-          <Link href="/" className={`${css.btn} ${css.btnPrimary}`}>
-            Back to main page
-          </Link>
-          <Link href="/booking" className={`${css.btn} ${css.btnSecondary}`}>
+          <ButtonLink href="/">Back to main page</ButtonLink>
+          <ButtonLink href="/booking" variant="secondary">
             Book a Table
-          </Link>
+          </ButtonLink>
         </div>
       </div>
     </section>

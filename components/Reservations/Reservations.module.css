@@ -1,0 +1,118 @@
+.page {
+  min-height: calc(100vh - 68px);
+  background-color: var(--bg-yellow);
+}
+
+.status {
+  padding-block: 40px;
+  color: var(--text-muted);
+}
+
+/* ===== Смуга з привітанням ===== */
+.greeting {
+  background-color: var(--bg-green);
+}
+
+.greetingInner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-block: 16px;
+}
+
+.hello {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.support {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: var(--bg-yellow);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.support a {
+  white-space: nowrap;
+}
+
+.supportIcon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* ===== Порожній стан ===== */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 40px 64px;
+  text-align: center;
+}
+
+.illustration {
+  width: 100%;
+  max-width: 439px;
+  height: auto;
+  margin-bottom: 32px;
+}
+
+.emptyTitle {
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.emptyText {
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.bookLink {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--text);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.bookLink:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (min-width: 768px) {
+  .greetingInner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hello {
+    font-size: 24px;
+  }
+
+  .support {
+    max-width: 439px;
+  }
+}

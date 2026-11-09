@@ -1,0 +1,87 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--white);
+}
+
+.imageWrapper {
+  position: relative;
+  height: 200px;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 16px 24px 20px;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.pinIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.33333;
+  color: var(--text);
+}
+
+.tables {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tableIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+}
+
+.occupancy span {
+  margin-left: 4px;
+}
+
+@media (min-width: 768px) {
+  .imageWrapper {
+    height: 220px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .imageWrapper {
+    height: 245px;
+  }
+
+  .address {
+    font-size: 24px;
+    line-height: 1.33333;
+  }
+}

@@ -5,7 +5,17 @@
   --accent: #0f7a37;
   --accent-dark: #0b5b29;
   --border: #e6e6e6;
-  --bg-soft: #d6e5d5;
+  --bg-green: #d9e5d9;
+  --bg-yellow: #f7f7ec;
+  --modal-bg: #f6f6f6;
+  --input-border: #dcdcdc;
+  --placeholder: #9a9a9a;
+  --disabled: #8a8a8a;
+  --link: #1d3fbf;
+  --error: #b42318;
+  --error-bg: #fbe8ea;
+  --focus: #d39b2c;
+  --warning: #c27c0e;
 }
 
 *,

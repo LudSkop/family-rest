@@ -1,0 +1,39 @@
+.section {
+  padding-block: 40px;
+  background-color: var(--bg-yellow);
+}
+
+.status {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* ===== Mobile: 1 картка в ряд ===== */
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* ===== Tablet: 2 картки ===== */
+@media (min-width: 768px) {
+  .section {
+    padding-block: 56px;
+  }
+
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+/* ===== Desktop: 4 картки ===== */
+@media (min-width: 1440px) {
+  .section {
+    padding-block: 64px;
+  }
+
+  .list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

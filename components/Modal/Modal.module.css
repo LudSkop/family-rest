@@ -1,0 +1,50 @@
+.dialog {
+  width: calc(100% - 32px);
+  max-width: 656px;
+  max-height: calc(100% - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background-color: var(--modal-bg);
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background-color: rgba(35, 35, 35, 0.4);
+}
+
+.content {
+  position: relative;
+  padding: 48px 20px 32px;
+}
+
+/* За приміткою Figma: іконка 16×16, на 16px від правого верхнього кута (у всіх модалках).
+   Сама кнопка більша (32×32), щоб у неї було легко влучити */
+.close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  color: var(--text);
+}
+
+.close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 56px 44px 44px;
+  }
+}

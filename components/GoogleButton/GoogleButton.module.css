@@ -1,0 +1,32 @@
+/*
+ * За гайдлайнами Google (Sign in with Google branding, light theme):
+ * білий фон, рамка #747775, текст #1F1F1F шрифтом Roboto Medium, кольоровий логотип "G"
+ */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 56px;
+  padding: 0 12px;
+  border: 1px solid #747775;
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-family: var(--font-roboto), Arial, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1f1f1f;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #f2f2f2;
+}
+
+.logo {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}

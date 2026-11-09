@@ -1,0 +1,73 @@
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.trigger:hover,
+.trigger[aria-expanded="true"] {
+  color: var(--accent);
+}
+
+.userIcon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  min-width: 220px;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: var(--white);
+  box-shadow: 0 8px 24px rgba(35, 35, 35, 0.12);
+}
+
+.name {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.email {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.33333;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.logout {
+  width: 100%;
+  padding: 8px 0;
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--error);
+}
+
+.logout:hover {
+  text-decoration: underline;
+}

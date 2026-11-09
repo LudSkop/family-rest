@@ -1,0 +1,49 @@
+/* Верхній відступ дає попередня секція (Most Popular Dishes) — фон спільний */
+.section {
+  padding-bottom: 40px;
+  background-color: var(--bg-yellow);
+}
+
+.status {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* ===== Mobile: 1 картка в ряд ===== */
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* ===== Tablet: 2 картки, непарна остання — на всю ширину ===== */
+@media (min-width: 768px) {
+  .section {
+    padding-bottom: 56px;
+  }
+
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .list li:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+}
+
+/* ===== Desktop: 3 картки ===== */
+@media (min-width: 1440px) {
+  .section {
+    padding-bottom: 64px;
+  }
+
+  .list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .list li:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}

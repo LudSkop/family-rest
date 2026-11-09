@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Suspense } from "react";
+import { Poppins, Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import AuthModals from "@/components/AuthModals/AuthModals";
+import AuthErrorHandler from "@/components/AuthErrorHandler/AuthErrorHandler";
+import { ToastProvider } from "@/components/Toast/ToastProvider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Лише для кнопки "Sign in with Google" — так вимагають гайдлайни Google
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["500"],
   display: "swap",
 });
 
@@ -23,11 +35,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={`${poppins.variable} ${roboto.variable}`}>
       <body>
         <TanStackProvider>
-          <Header />
-          <main>{children}</main>
+          <ToastProvider>
+            <Header />
+            <main>{children}</main>
+            <Suspense fallback={null}>
+              <AuthModals />
+              <AuthErrorHandler />
+            </Suspense>
+          </ToastProvider>
         </TanStackProvider>
       </body>
     </html>

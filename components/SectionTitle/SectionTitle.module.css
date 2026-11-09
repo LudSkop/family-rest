@@ -1,0 +1,20 @@
+.title {
+  margin-bottom: 24px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .title {
+    margin-bottom: 32px;
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .title {
+    font-size: 32px;
+  }
+}

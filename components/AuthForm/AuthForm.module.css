@@ -1,0 +1,108 @@
+/* Спільні стилі форм авторизації: Sign In, Create an Account, Reset Password */
+
+.title {
+  margin-bottom: 32px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.banner {
+  margin-bottom: 32px;
+  padding: 16px 20px;
+  border-radius: 4px;
+  background-color: var(--error-bg);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--error);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.passwordBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.passwordBlock .link {
+  align-self: flex-end;
+}
+
+.link {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  color: var(--accent);
+}
+
+/* Сіра, поки поля порожні; зелена — коли заповнені (як у Figma) */
+.submit {
+  width: 100%;
+  height: 56px;
+  margin-top: 16px;
+  border-radius: 8px;
+  background-color: var(--disabled);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--white);
+  transition: background-color 0.2s ease;
+}
+
+.submitActive {
+  background: linear-gradient(270.63deg, var(--accent) 0.48%, var(--accent-dark) 97.4%);
+}
+
+.submitActive:hover {
+  background: var(--accent-dark);
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+/* Роздільник «or» між формою і кнопкою Google */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-block: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--input-border);
+}
+
+.footer {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .title {
+    margin-bottom: 40px;
+    font-size: 28px;
+  }
+}

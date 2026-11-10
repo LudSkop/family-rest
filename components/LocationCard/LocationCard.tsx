@@ -37,13 +37,13 @@ const TableIcon = () => (
 );
 
 const LocationCard = ({ location }: Props) => {
-  const { address, tables, occupancy, imageUrl } = location;
+  const { address, table_count, image_url } = location;
 
   return (
     <article className={css.card}>
       <div className={css.imageWrapper}>
         <Image
-          src={imageUrl}
+          src={image_url}
           alt={`Family Rest restaurant at ${address}`}
           fill
           sizes="(min-width: 1440px) 432px, (min-width: 768px) 50vw, 100vw"
@@ -60,11 +60,9 @@ const LocationCard = ({ location }: Props) => {
         <div className={css.details}>
           <p className={css.tables}>
             <TableIcon />
-            {tables} tables
+            {table_count} {table_count === 1 ? "table" : "tables"}
           </p>
-          <p className={css.occupancy}>
-            Daily occupancy: <span>{occupancy}%</span>
-          </p>
+          {/* TODO: «Daily occupancy» з Figma — бекенд поки не віддає цих даних */}
         </div>
       </div>
     </article>

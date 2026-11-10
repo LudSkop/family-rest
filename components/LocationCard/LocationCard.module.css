@@ -65,10 +65,6 @@
   color: var(--accent);
 }
 
-.occupancy span {
-  margin-left: 4px;
-}
-
 @media (min-width: 768px) {
   .imageWrapper {
     height: 220px;

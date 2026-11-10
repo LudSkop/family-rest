@@ -1,7 +1,7 @@
+// Поля один в один як у відповіді бекенда (GET /locations)
 export interface Location {
   id: string;
   address: string;
-  tables: number;
-  occupancy: number;
-  imageUrl: string;
+  image_url: string;
+  table_count: number;
 }

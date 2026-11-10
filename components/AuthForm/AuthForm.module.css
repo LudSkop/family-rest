@@ -74,6 +74,80 @@
   opacity: 0.8;
 }
 
+/* Пояснення під заголовком: «The verification code was sent to email …» */
+.text {
+  margin-top: -16px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.text strong {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* Кнопки «Back» + «Confirm» в один ряд */
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.buttons .submit {
+  margin-top: 0;
+}
+
+.secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  border: 1.4px solid var(--accent);
+  border-radius: 8px;
+  background-color: var(--white);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--accent);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.secondary:hover {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+/* Стан «перевіряємо код з посилання» — без форми */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.loading::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--input-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Роздільник «or» між формою і кнопкою Google */
 .divider {
   display: flex;

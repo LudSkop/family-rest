@@ -104,6 +104,29 @@ export const resendCode = async (email: string) => {
   await nextServer.post("/auth/resend-code", { email });
 };
 
+// ===== Password reset =====
+
+export const requestPasswordReset = async (email: string) => {
+  await nextServer.post("/auth/password-reset/request", { email });
+};
+
+export const verifyPasswordResetCode = async (params: VerifyEmailParams) => {
+  await nextServer.post("/auth/password-reset/verify-code", params);
+};
+
+export interface ConfirmPasswordResetParams {
+  email: string;
+  code: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export const confirmPasswordReset = async (
+  params: ConfirmPasswordResetParams,
+) => {
+  await nextServer.post("/auth/password-reset/confirm", params);
+};
+
 // ===== Errors =====
 
 interface ValidationErrorBody {

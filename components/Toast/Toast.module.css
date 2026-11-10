@@ -1,11 +1,12 @@
-/* Поверх усього, включно з модалками (<dialog> — у top layer, тому toast над ним не видно;
-   для модалок показуємо toast уже після їх закриття) */
+/* popover: скидаємо стандартні стилі браузера ([popover] має рамку, фон, inset: 0) */
 .container {
   position: fixed;
-  top: 84px;
-  left: 50%;
-  z-index: 100;
-  display: flex;
+  inset: 84px auto auto 50%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
   flex-direction: column;
   gap: 8px;
   width: calc(100% - 32px);
@@ -14,9 +15,15 @@
   pointer-events: none;
 }
 
+/* Поки popover закритий, браузер ховає його сам (display: none) */
+.container:popover-open {
+  display: flex;
+}
+
+/* Як у Figma: світлий фон, іконка, заголовок «Success» і текст */
 .toast {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 12px 12px 12px 16px;
   border-radius: 8px;
@@ -27,11 +34,20 @@
 }
 
 .success {
-  border-left: 4px solid var(--accent);
+  border: 1px solid var(--success-border);
+  background-color: var(--success-bg);
 }
 
 .error {
-  border-left: 4px solid var(--error);
+  border: 1px solid var(--error);
+  background-color: var(--error-bg);
+}
+
+.title {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
 }
 
 .icon {
@@ -90,7 +106,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast {
+  /* Поки popover закритий, браузер ховає його сам (display: none) */
+.container:popover-open {
+  display: flex;
+}
+
+/* Як у Figma: світлий фон, іконка, заголовок «Success» і текст */
+.toast {
     animation: none;
   }
 }

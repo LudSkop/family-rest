@@ -1,7 +1,14 @@
 "use client";
 
 import css from "./Toast.module.css";
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type ToastVariant = "success" | "error";
 
@@ -23,6 +30,17 @@ let nextId = 0;
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Контейнер — popover: так він у «верхньому шарі» і видний навіть поверх модалки
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const isOpen = container.matches(":popover-open");
+    if (toasts.length > 0 && !isOpen) container.showPopover();
+    if (toasts.length === 0 && isOpen) container.hidePopover();
+  }, [toasts.length]);
 
   const dismiss = useCallback((id: number) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
@@ -42,7 +60,13 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
 
       {/* aria-live: скрінрідер прочитає повідомлення, щойно воно з'явиться */}
-      <div className={css.container} aria-live="polite">
+      <div
+        ref={containerRef}
+        popover="manual"
+        data-toast-root=""
+        className={css.container}
+        aria-live="polite"
+      >
         {toasts.map(({ id, message, variant }) => (
           <div
             key={id}
@@ -52,7 +76,12 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             <span className={css.icon} aria-hidden="true">
               {variant === "success" ? "✓" : "!"}
             </span>
-            <p className={css.message}>{message}</p>
+            <div className={css.message}>
+              <p className={css.title}>
+                {variant === "success" ? "Success" : "Error"}
+              </p>
+              <p>{message}</p>
+            </div>
             <button
               type="button"
               className={css.close}

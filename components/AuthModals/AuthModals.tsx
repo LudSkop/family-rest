@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SignInModal from "@/components/SignInModal/SignInModal";
 import SignUpModal from "@/components/SignUpModal/SignUpModal";
+import ResetPasswordModal from "@/components/ResetPasswordModal/ResetPasswordModal";
 
 // Модалки авторизації відкриваються через ?auth=... в адресі:
 // так їх можна відкрити з будь-якої сторінки посиланням (напр. після verify-email)
@@ -24,6 +25,8 @@ const AuthModals = () => {
 
   if (modal === "sign-in") return <SignInModal onClose={close} />;
   if (modal === "sign-up") return <SignUpModal onClose={close} />;
+  if (modal === "forgot-password")
+    return <ResetPasswordModal onClose={close} />;
 
   return null;
 };

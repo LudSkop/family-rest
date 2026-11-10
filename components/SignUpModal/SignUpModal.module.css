@@ -11,55 +11,6 @@
   gap: 8px;
 }
 
-.rules {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-left: 18px;
-  list-style: disc;
-  font-size: 12px;
-  line-height: 1.33333;
-  color: var(--text);
-}
-
-.ruleMet {
-  color: var(--accent);
-}
-
-.ruleError {
-  color: var(--error);
-}
-
-/* Індикатор надійності праворуч від лейбла: ● Strong */
-.strength {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.strength::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: currentColor;
-}
-
-.strong::before {
-  background-color: var(--accent);
-}
-
-.medium::before {
-  background-color: var(--warning);
-}
-
-.weak::before {
-  background-color: var(--error);
-}
-
 /* Від планшета — ім'я і прізвище в один ряд, як у Figma */
 @media (min-width: 768px) {
   .nameRow {

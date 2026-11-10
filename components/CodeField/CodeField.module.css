@@ -1,0 +1,36 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resend {
+  align-self: flex-end;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.resend strong {
+  font-weight: 600;
+}
+
+.resendBtn {
+  padding: 0;
+  background-color: transparent;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.resendBtn:hover {
+  color: var(--accent);
+}
+
+.resendBtn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}

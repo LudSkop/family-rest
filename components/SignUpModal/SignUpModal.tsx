@@ -10,7 +10,11 @@ import Modal from "@/components/Modal/Modal";
 import TextField from "@/components/TextField/TextField";
 import PasswordField from "@/components/PasswordField/PasswordField";
 import GoogleButton from "@/components/GoogleButton/GoogleButton";
+import PasswordRules, {
+  PasswordStrength,
+} from "@/components/PasswordRules/PasswordRules";
 import { getApiError, register } from "@/lib/api/clientApi";
+import { isPasswordValid } from "@/lib/utils/password";
 
 type Props = {
   onClose: () => void;
@@ -28,38 +32,6 @@ type FieldErrors = Partial<Record<keyof Values, string>> & { form?: string };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Правила пароля з Figma перевіряє лише фронт (бекенд — тільки 8–128 символів)
-const PASSWORD_RULES = [
-  {
-    label: "8–16 characters",
-    test: (value: string) => value.length >= 8 && value.length <= 16,
-  },
-  {
-    label: "Includes: uppercase, lowercase, number, symbol",
-    test: (value: string) =>
-      /[A-Z]/.test(value) &&
-      /[a-z]/.test(value) &&
-      /\d/.test(value) &&
-      /[^A-Za-z0-9\s]/.test(value),
-  },
-];
-
-// Надійність: скільки з 5 вимог виконано (довжина, A-Z, a-z, цифра, символ)
-const getStrength = (value: string) => {
-  const checks = [
-    value.length >= 8 && value.length <= 16,
-    /[A-Z]/.test(value),
-    /[a-z]/.test(value),
-    /\d/.test(value),
-    /[^A-Za-z0-9\s]/.test(value),
-  ];
-  const score = checks.filter(Boolean).length;
-
-  if (score === checks.length) return { label: "Strong", level: "strong" };
-  if (score >= 3) return { label: "Medium", level: "medium" };
-  return { label: "Weak", level: "weak" };
-};
-
 const validate = (values: Values): FieldErrors => {
   const errors: FieldErrors = {};
 
@@ -73,7 +45,7 @@ const validate = (values: Values): FieldErrors => {
     errors.email = "Please enter a valid email address.";
 
   if (!values.password) errors.password = "Password is required.";
-  else if (!PASSWORD_RULES.every((rule) => rule.test(values.password)))
+  else if (!isPasswordValid(values.password))
     errors.password = "Password doesn't meet the requirements.";
 
   if (!values.confirmPassword)
@@ -208,35 +180,14 @@ const SignUpModal = ({ onClose }: Props) => {
             onChange={handleChange}
             error={errors.password}
             aria-describedby="password-rules"
-            labelExtra={
-              values.password && (
-                <span
-                  className={`${ownCss.strength} ${ownCss[getStrength(values.password).level]}`}
-                  aria-live="polite"
-                >
-                  {getStrength(values.password).label}
-                </span>
-              )
-            }
+            labelExtra={<PasswordStrength value={values.password} />}
           />
 
-          <ul id="password-rules" className={ownCss.rules}>
-            {PASSWORD_RULES.map((rule) => {
-              // Виконане правило — зелене; після невдалої спроби невиконане — червоне
-              const isMet = rule.test(values.password);
-              const isBroken = Boolean(errors.password) && !isMet;
-              const ruleClass = isMet
-                ? ownCss.ruleMet
-                : isBroken
-                  ? ownCss.ruleError
-                  : undefined;
-              return (
-                <li key={rule.label} className={ruleClass}>
-                  {rule.label}
-                </li>
-              );
-            })}
-          </ul>
+          <PasswordRules
+            id="password-rules"
+            value={values.password}
+            showErrors={Boolean(errors.password)}
+          />
         </div>
 
         <PasswordField

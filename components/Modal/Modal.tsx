@@ -23,6 +23,14 @@ const Modal = ({ onClose, children, labelledBy }: Props) => {
     // Одразу ставимо курсор у перше поле, а не на кнопку закриття
     dialog.querySelector("input")?.focus();
 
+    // Якщо зараз показано toast — піднімаємо його над щойно відкритою модалкою
+    document
+      .querySelectorAll<HTMLElement>("[data-toast-root]:popover-open")
+      .forEach((toastRoot) => {
+        toastRoot.hidePopover();
+        toastRoot.showPopover();
+      });
+
     return () => {
       dialog.close();
       document.body.style.overflow = "";
@@ -31,7 +39,31 @@ const Modal = ({ onClose, children, labelledBy }: Props) => {
 
   // Клік по затемненню (сам <dialog>, а не його вміст) закриває модалку
   const handleClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-    if (event.target === event.currentTarget) onClose();
+    if (event.target !== event.currentTarget) return;
+
+    // Toast над модалкою браузер робить неактивним (inert), і клік по ньому
+    // «проходить» на <dialog>. Тоді не закриваємо модалку, а натискаємо × toast
+    const isInside = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return (
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+      );
+    };
+
+    const toast = [
+      ...document.querySelectorAll("[data-toast-root] [role]"),
+    ].find(isInside);
+
+    if (toast) {
+      const dismissButton = toast.querySelector("button");
+      if (dismissButton && isInside(dismissButton)) dismissButton.click();
+      return;
+    }
+
+    onClose();
   };
 
   const handleCancel = (event: React.SyntheticEvent<HTMLDialogElement>) => {

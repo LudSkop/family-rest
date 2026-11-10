@@ -22,6 +22,9 @@ const UserMenu = ({ user, onLogout }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Якщо імені немає (напр. акаунт з Google без імені) — частина email до @
+  const displayName = user.first_name.trim() || user.email.split("@")[0];
+
   // Закриваємо по кліку поза меню і по Escape
   useEffect(() => {
     if (!isOpen) return;
@@ -46,12 +49,13 @@ const UserMenu = ({ user, onLogout }: Props) => {
       <button
         type="button"
         className={css.trigger}
-        aria-label="Account menu"
+        aria-label={`Account menu: ${displayName}`}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <UserIcon />
+        <span className={css.triggerName}>{displayName}</span>
       </button>
 
       {isOpen && (

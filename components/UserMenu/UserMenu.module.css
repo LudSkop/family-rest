@@ -2,13 +2,14 @@
   position: relative;
 }
 
+/* Іконка профілю + ім'я користувача */
 .trigger {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 44px;
+  gap: 8px;
   height: 44px;
-  border-radius: 50%;
+  padding: 0 8px;
+  border-radius: 8px;
   background-color: transparent;
   color: var(--text);
   transition: color 0.2s ease;
@@ -19,7 +20,18 @@
   color: var(--accent);
 }
 
+.triggerName {
+  max-width: 160px;
+  overflow: hidden;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .userIcon {
+  flex-shrink: 0;
   width: 24px;
   height: 24px;
   fill: none;

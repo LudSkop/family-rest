@@ -17,7 +17,7 @@ const Locations = () => {
   });
 
   return (
-    <section className={css.section}>
+    <section id="locations" className={css.section}>
       <div className="container">
         <SectionTitle>Locations</SectionTitle>
 

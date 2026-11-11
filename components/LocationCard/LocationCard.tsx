@@ -1,5 +1,6 @@
 import css from "./LocationCard.module.css";
 import Image from "next/image";
+import Link from "next/link";
 import type { Location } from "@/types/location";
 
 type Props = {
@@ -37,7 +38,7 @@ const TableIcon = () => (
 );
 
 const LocationCard = ({ location }: Props) => {
-  const { address, table_count, image_url } = location;
+  const { id, address, table_count, image_url } = location;
 
   return (
     <article className={css.card}>
@@ -54,7 +55,10 @@ const LocationCard = ({ location }: Props) => {
       <div className={css.body}>
         <h3 className={css.address}>
           <PinIcon />
-          {address}
+          {/* Посилання розтягнуте на всю картку (::after) — клікабельна вся картка */}
+          <Link href={`/locations/${id}`} className={css.link}>
+            {address}
+          </Link>
         </h3>
 
         <div className={css.details}>

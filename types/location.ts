@@ -5,3 +5,8 @@ export interface Location {
   image_url: string;
   table_count: number;
 }
+
+// GET /locations/{id} — та сама картка + опис
+export interface LocationDetails extends Location {
+  description: string;
+}

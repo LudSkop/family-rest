@@ -5,7 +5,7 @@ import axios, { isAxiosError } from "axios";
 import type { ApiError } from "@/types/api";
 import type { User } from "@/types/user";
 import type { Dish, DishCategory, DishPage, DishSort } from "@/types/dish";
-import type { Location } from "@/types/location";
+import type { Location, LocationDetails } from "@/types/location";
 
 const nextServer = axios.create({
   baseURL: "/api/v1",
@@ -34,6 +34,13 @@ export const getPopularDishes = async (): Promise<Dish[]> => {
 
 export const getLocations = async (): Promise<Location[]> => {
   const { data } = await nextServer.get<Location[]>("/locations");
+  return data;
+};
+
+export const getLocation = async (id: string): Promise<LocationDetails> => {
+  const { data } = await nextServer.get<LocationDetails>(
+    `/locations/${encodeURIComponent(id)}`,
+  );
   return data;
 };
 

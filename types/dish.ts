@@ -21,3 +21,13 @@ export interface DishPage {
   limit: number;
   offset: number;
 }
+
+// GET /menu/dishes/{id} — та сама картка + опис і поживність
+export interface DishDetails extends Dish {
+  description: string;
+  calories: number;
+  protein: string;
+  fats: string;
+  carbs: string;
+  vitamins: string;
+}

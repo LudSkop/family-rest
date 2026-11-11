@@ -5,10 +5,11 @@ import { formatPrice } from "@/lib/utils/formatPrice";
 
 type Props = {
   dish: Dish;
+  onOpen: (id: string) => void;
 };
 
-const DishCard = ({ dish }: Props) => {
-  const { name, price_cents, weight_grams, image_url } = dish;
+const DishCard = ({ dish, onOpen }: Props) => {
+  const { id, name, price_cents, weight_grams, image_url } = dish;
 
   return (
     <article className={css.card}>
@@ -23,7 +24,17 @@ const DishCard = ({ dish }: Props) => {
       </div>
 
       <div className={css.info}>
-        <h3 className={css.name}>{name}</h3>
+        <h3 className={css.name}>
+          {/* Кнопка розтягнута на всю картку (::after) — клікабельна вся картка */}
+          <button
+            type="button"
+            className={css.link}
+            aria-haspopup="dialog"
+            onClick={() => onOpen(id)}
+          >
+            {name}
+          </button>
+        </h3>
         <div className={css.meta}>
           <p className={css.price}>{formatPrice(price_cents)}</p>
           <p className={css.weight}>{weight_grams} g</p>

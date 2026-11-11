@@ -1,12 +1,16 @@
 "use client";
 
 import css from "./PopularDishes.module.css";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPopularDishes } from "@/lib/api/clientApi";
 import DishCard from "@/components/DishCard/DishCard";
 import SectionTitle from "@/components/SectionTitle/SectionTitle";
+import DishModal from "@/components/DishModal/DishModal";
 
 const PopularDishes = () => {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   const {
     data: dishes,
     isLoading,
@@ -33,12 +37,16 @@ const PopularDishes = () => {
           <ul className={css.list}>
             {dishes.map((dish) => (
               <li key={dish.id}>
-                <DishCard dish={dish} />
+                <DishCard dish={dish} onOpen={setSelectedId} />
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      {selectedId && (
+        <DishModal id={selectedId} onClose={() => setSelectedId(null)} />
+      )}
     </section>
   );
 };

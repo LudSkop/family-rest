@@ -68,9 +68,41 @@
 }
 
 .actions {
-  justify-self: end;
   align-items: center;
   gap: 12px;
+}
+
+.end {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 4px;
+}
+
+.cartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.cartBtn:hover {
+  color: var(--accent);
+}
+
+.cartBtn svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .actionBtn {
@@ -183,6 +215,10 @@
 
   .actions {
     display: flex;
+  }
+
+  .end {
+    gap: 8px;
   }
 
   .burger,

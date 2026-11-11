@@ -1,0 +1,225 @@
+.page {
+  min-height: calc(100vh - 68px);
+  background-color: var(--bg-yellow);
+}
+
+/* ===== Хлібні крихти: Main page › Menu ===== */
+.breadcrumbs {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.breadcrumbs ol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-block: 12px;
+  list-style: none;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.breadcrumbs li + li::before {
+  content: "›";
+  margin-right: 8px;
+  color: var(--text-muted);
+}
+
+.breadcrumbs a {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.breadcrumbs a:hover {
+  color: var(--accent);
+}
+
+.breadcrumbs [aria-current="page"] {
+  font-weight: 500;
+}
+
+/* ===== Банер: зелений фон, праворуч фото страви (як у Figma) ===== */
+.bannerWrapper {
+  padding-top: 24px;
+}
+
+.banner {
+  padding: 32px 20px;
+  overflow: hidden;
+  border-radius: 16px;
+  /* Банер з Figma: зелений фон зліва вже є на самій картинці; на вузьких
+     екранах картинка обрізається зліва, і видно частину з салатом праворуч */
+  background:
+    /* Mobile: зелений шар під текстом, щоб «Menu» читалося поверх фото */
+    linear-gradient(
+      90deg,
+      rgba(217, 229, 217, 0.95) 0%,
+      rgba(217, 229, 217, 0.85) 55%,
+      rgba(217, 229, 217, 0.2) 100%
+    ),
+    url("/image/menu-banner.jpg") right center / cover no-repeat,
+    var(--bg-green);
+}
+
+.kicker {
+  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--accent-dark);
+}
+
+.title {
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.section {
+  padding-block: 24px 48px;
+}
+
+/* ===== Категорії (вкладки з підкресленням) + сортування ===== */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* На вузьких екранах вкладки гортаються вбік, а не переносяться */
+.tabs {
+  display: flex;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 2px solid var(--border);
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: nowrap;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--accent);
+}
+
+.tab[aria-pressed="true"] {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.sort select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--white);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sort select:focus {
+  outline: none;
+  border-color: var(--focus);
+}
+
+/* ===== Сітка страв: 1 / 2 / 4 в ряд, як Most Popular Dishes ===== */
+.results {
+  margin-bottom: 32px;
+  scroll-margin-top: 16px;
+}
+
+.status {
+  padding-block: 24px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  transition: opacity 0.2s ease;
+}
+
+/* Поки вантажиться інша сторінка/категорія — старі картки трохи бліді */
+.listLoading {
+  opacity: 0.5;
+}
+
+@media (min-width: 768px) {
+  .banner {
+    padding: 48px 32px;
+  }
+
+  .title {
+    font-size: 40px;
+  }
+
+  .section {
+    padding-block: 32px 64px;
+  }
+
+  .sort select {
+    width: 200px;
+  }
+
+  .toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tabs {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1440px) {
+  /* На desktop зелена частина картинки сама вміщає текст — шар не потрібен */
+  .bannerWrapper {
+    padding-top: 32px;
+  }
+
+  .banner {
+    padding: 64px 48px;
+    background: url("/image/menu-banner.jpg") right center / cover no-repeat
+      var(--bg-green);
+  }
+
+  .title {
+    font-size: 48px;
+  }
+
+  .section {
+    padding-block: 40px 80px;
+  }
+
+  .list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

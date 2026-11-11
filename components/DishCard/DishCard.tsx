@@ -9,10 +9,14 @@ type Props = {
 };
 
 const DishCard = ({ dish, onOpen }: Props) => {
-  const { id, name, price_cents, weight_grams, image_url } = dish;
+  const { id, name, price_cents, weight_grams, image_url, is_available } = dish;
 
   return (
-    <article className={css.card}>
+    <article
+      className={`${css.card} ${is_available ? "" : css.soldOut}`}
+    >
+      {!is_available && <span className={css.badge}>Sold Out</span>}
+
       <div className={css.imageWrapper}>
         <Image
           src={image_url}

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GOOGLE_LOGIN_URL } from "@/components/GoogleButton/GoogleButton";
 import UserMenu from "@/components/UserMenu/UserMenu";
+import CartDrawer from "@/components/CartDrawer/CartDrawer";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { logout } from "@/lib/api/clientApi";
@@ -30,6 +31,7 @@ const Header = () => {
   const { showToast } = useToast();
   const { data: user } = useCurrentUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const { mutate: logoutMutate } = useMutation({
     mutationFn: logout,
@@ -124,27 +126,49 @@ const Header = () => {
           <ul className={css.navigation}>{navLinks}</ul>
         </nav>
 
-        <div className={css.actions}>
-          {user ? (
-            <UserMenu user={user} onLogout={handleLogout} />
-          ) : (
-            guestActions
-          )}
-        </div>
+        {/* Праворуч: вхід / профіль, кошик і (на мобільному) бургер */}
+        <div className={css.end}>
+          <div className={css.actions}>
+            {user ? (
+              <UserMenu user={user} onLogout={handleLogout} />
+            ) : (
+              guestActions
+            )}
+          </div>
 
-        <button
-          type="button"
-          className={css.burger}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-        >
-          <span className={css.burgerLine} />
-          <span className={css.burgerLine} />
-          <span className={css.burgerLine} />
-        </button>
+          <button
+            type="button"
+            className={css.cartBtn}
+            aria-label="Cart"
+            aria-haspopup="dialog"
+            onClick={() => {
+              closeMenu();
+              setIsCartOpen(true);
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.2" />
+              <circle cx="9.5" cy="19.5" r="1.3" />
+              <circle cx="17" cy="19.5" r="1.3" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            className={css.burger}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+          >
+            <span className={css.burgerLine} />
+            <span className={css.burgerLine} />
+            <span className={css.burgerLine} />
+          </button>
+        </div>
       </div>
+
+      {isCartOpen && <CartDrawer onClose={() => setIsCartOpen(false)} />}
 
       {isMenuOpen && (
         <div id="mobile-menu" className={css.mobileMenu}>

@@ -12,6 +12,7 @@ import type {
   DishSort,
 } from "@/types/dish";
 import type { Location, LocationDetails } from "@/types/location";
+import type { TablePage } from "@/types/booking";
 
 const nextServer = axios.create({
   baseURL: "/api/v1",
@@ -54,6 +55,24 @@ export const getLocation = async (id: string): Promise<LocationDetails> => {
   const { data } = await nextServer.get<LocationDetails>(
     `/locations/${encodeURIComponent(id)}`,
   );
+  return data;
+};
+
+// ===== Bookings =====
+
+export interface SearchTablesParams {
+  date: string; // YYYY-MM-DD
+  party_size: number;
+  location_id?: string;
+  time?: string; // HH:MM, один з кроків сітки
+}
+
+export const searchTables = async (
+  params: SearchTablesParams,
+): Promise<TablePage> => {
+  const { data } = await nextServer.get<TablePage>("/bookings/tables", {
+    params: { ...params, limit: 50 },
+  });
   return data;
 };
 

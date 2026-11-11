@@ -1,0 +1,174 @@
+/* Біла картка з формою (у Figma — 432 Hug × 504 Hug) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 432px;
+  padding: 32px 20px;
+  border-radius: 16px;
+  background-color: var(--white);
+}
+
+.title {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--text);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Time ширший за Guests, як у Figma */
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.control {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--white);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.2s ease;
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--focus);
+}
+
+.controlError,
+.controlError:focus {
+  border-color: var(--error);
+}
+
+/* Власна стрілка замість стандартної — як у Figma */
+.select {
+  padding-right: 40px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23232323' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-size: 18px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.placeholder {
+  color: var(--placeholder);
+}
+
+/* Порожня дата в Chrome теж сіра, як placeholder */
+.control[type="date"]:invalid,
+.control[type="date"]:not(:focus):placeholder-shown {
+  color: var(--placeholder);
+}
+
+.error {
+  font-size: 12px;
+  line-height: 1.33333;
+  color: var(--error);
+}
+
+/* ===== Guests: − 1 + ===== */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--white);
+}
+
+.stepBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background-color: transparent;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--accent);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.stepBtn:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.stepBtn:disabled {
+  border-color: var(--input-border);
+  color: var(--placeholder);
+  cursor: not-allowed;
+}
+
+.count {
+  min-width: 28px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text);
+}
+
+.submit {
+  height: 52px;
+  margin-top: 8px;
+  border-radius: 8px;
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--white);
+  transition: opacity 0.2s ease;
+}
+
+.submit:hover {
+  background: var(--accent-dark);
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .form {
+    padding: 40px 32px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+}

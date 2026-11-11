@@ -1,0 +1,83 @@
+/*
+ * Desktop: модалка 580px, як картка з описом у Figma (580 × 356 Hug — висота за вмістом).
+ * dialog.modal і dialog.modal > div сильніші за .dialog / .content з Modal.module.css,
+ * тож розміри не залежать від порядку підключення CSS
+ */
+@media (min-width: 1440px) {
+  dialog.modal {
+    max-width: 580px;
+  }
+
+  dialog.modal > div {
+    padding: 48px 24px 24px;
+  }
+}
+
+.status {
+  padding-block: 24px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* Фото ресторану по центру, на всю ширину модалки */
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.pinIcon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: var(--accent);
+}
+
+.subtitle {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* «Book a table» ширша за «View menu», як у Figma */
+.actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .address {
+    font-size: 28px;
+  }
+}

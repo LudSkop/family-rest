@@ -18,6 +18,15 @@
   transition: transform 0.3s ease;
 }
 
+.link {
+  padding: 0;
+  background-color: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
 .link::after {
   content: "";
   position: absolute;

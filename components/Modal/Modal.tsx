@@ -7,10 +7,11 @@ type Props = {
   onClose: () => void;
   children: React.ReactNode;
   labelledBy?: string;
+  className?: string;
 };
 
 // Нативний <dialog>: сам тримає фокус усередині й закривається по Escape
-const Modal = ({ onClose, children, labelledBy }: Props) => {
+const Modal = ({ onClose, children, labelledBy, className }: Props) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -74,7 +75,7 @@ const Modal = ({ onClose, children, labelledBy }: Props) => {
   return (
     <dialog
       ref={dialogRef}
-      className={css.dialog}
+      className={className ? `${css.dialog} ${className}` : css.dialog}
       aria-labelledby={labelledBy}
       onClick={handleClick}
       onCancel={handleCancel}

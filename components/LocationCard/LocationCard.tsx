@@ -1,10 +1,10 @@
 import css from "./LocationCard.module.css";
 import Image from "next/image";
-import Link from "next/link";
 import type { Location } from "@/types/location";
 
 type Props = {
   location: Location;
+  onOpen: (id: string) => void;
 };
 
 const PinIcon = () => (
@@ -37,7 +37,7 @@ const TableIcon = () => (
   </svg>
 );
 
-const LocationCard = ({ location }: Props) => {
+const LocationCard = ({ location, onOpen }: Props) => {
   const { id, address, table_count, image_url } = location;
 
   return (
@@ -55,10 +55,15 @@ const LocationCard = ({ location }: Props) => {
       <div className={css.body}>
         <h3 className={css.address}>
           <PinIcon />
-          {/* Посилання розтягнуте на всю картку (::after) — клікабельна вся картка */}
-          <Link href={`/locations/${id}`} className={css.link}>
+          {/* Кнопка розтягнута на всю картку (::after) — клікабельна вся картка */}
+          <button
+            type="button"
+            className={css.link}
+            aria-haspopup="dialog"
+            onClick={() => onOpen(id)}
+          >
             {address}
-          </Link>
+          </button>
         </h3>
 
         <div className={css.details}>

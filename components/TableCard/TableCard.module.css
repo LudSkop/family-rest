@@ -1,0 +1,95 @@
+.card {
+  overflow: hidden;
+  height: 100%;
+  border-radius: 16px;
+  background-color: var(--white);
+}
+
+.imageWrapper {
+  position: relative;
+  height: 140px;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.body {
+  padding: 16px;
+}
+
+/* «Table 1» зеленим ліворуч, «Up to 4 guests» праворуч */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--accent);
+}
+
+.capacity {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.address {
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Сітка дня: 6 часів у ряд */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.slot {
+  display: block;
+  width: 100%;
+  padding: 4px 0;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.free {
+  border-color: var(--accent);
+  background-color: transparent;
+  color: var(--accent);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.free:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.free:disabled {
+  cursor: wait;
+}
+
+.taken {
+  border-color: var(--border);
+  color: var(--placeholder);
+}
+
+@media (min-width: 1440px) {
+  .imageWrapper {
+    height: 160px;
+  }
+}

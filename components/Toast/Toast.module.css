@@ -107,12 +107,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* Поки popover закритий, браузер ховає його сам (display: none) */
-.container:popover-open {
-  display: flex;
-}
+  .container:popover-open {
+    display: flex;
+  }
 
-/* Як у Figma: світлий фон, іконка, заголовок «Success» і текст */
-.toast {
+  /* Як у Figma: світлий фон, іконка, заголовок «Success» і текст */
+  .toast {
     animation: none;
   }
 }

@@ -165,10 +165,16 @@
 
 @media (min-width: 768px) {
   .form {
-    padding: 40px 32px;
+    padding: 32px 24px;
   }
 
   .title {
     font-size: 32px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .form {
+    padding: 40px 32px;
   }
 }

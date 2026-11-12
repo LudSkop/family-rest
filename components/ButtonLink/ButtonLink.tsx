@@ -5,11 +5,21 @@ type Props = {
   href: string;
   variant?: "primary" | "secondary";
   children: React.ReactNode;
+  onClick?: () => void;
 };
 
-const ButtonLink = ({ href, variant = "primary", children }: Props) => {
+const ButtonLink = ({
+  href,
+  variant = "primary",
+  children,
+  onClick,
+}: Props) => {
   return (
-    <Link href={href} className={`${css.btn} ${css[variant]}`}>
+    <Link
+      href={href}
+      className={`${css.btn} ${css[variant]}`}
+      onClick={onClick}
+    >
       {children}
     </Link>
   );

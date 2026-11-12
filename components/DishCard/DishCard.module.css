@@ -76,6 +76,27 @@
   opacity: 0.45;
 }
 
+/* Над розтягнутою на всю картку кнопкою відкриття модалки (::after, z-index 1) */
+.preOrderBtn {
+  position: relative;
+  z-index: 2;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--white);
+}
+
+.preOrderBtn:hover {
+  background: var(--accent-dark);
+}
+
 .info {
   display: flex;
   justify-content: space-between;

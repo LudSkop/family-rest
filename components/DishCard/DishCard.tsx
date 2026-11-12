@@ -6,15 +6,15 @@ import { formatPrice } from "@/lib/utils/formatPrice";
 type Props = {
   dish: Dish;
   onOpen: (id: string) => void;
+  // Лише в режимі передзамовлення: показує кнопку «Pre-Order»
+  onPreOrder?: (dish: Dish) => void;
 };
 
-const DishCard = ({ dish, onOpen }: Props) => {
+const DishCard = ({ dish, onOpen, onPreOrder }: Props) => {
   const { id, name, price_cents, weight_grams, image_url, is_available } = dish;
 
   return (
-    <article
-      className={`${css.card} ${is_available ? "" : css.soldOut}`}
-    >
+    <article className={`${css.card} ${is_available ? "" : css.soldOut}`}>
       {!is_available && <span className={css.badge}>Sold Out</span>}
 
       <div className={css.imageWrapper}>
@@ -44,6 +44,17 @@ const DishCard = ({ dish, onOpen }: Props) => {
           <p className={css.weight}>{weight_grams} g</p>
         </div>
       </div>
+
+      {/* Розпродану страву замовити не можна — кнопки немає */}
+      {onPreOrder && is_available && (
+        <button
+          type="button"
+          className={css.preOrderBtn}
+          onClick={() => onPreOrder(dish)}
+        >
+          Pre-Order
+        </button>
+      )}
     </article>
   );
 };

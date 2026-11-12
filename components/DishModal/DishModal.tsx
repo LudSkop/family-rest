@@ -6,14 +6,17 @@ import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
 import { getDish } from "@/lib/api/clientApi";
 import { formatPrice } from "@/lib/utils/formatPrice";
+import type { Dish } from "@/types/dish";
 
 type Props = {
   id: string;
   onClose: () => void;
+  // Лише в режимі передзамовлення: велика кнопка «Pre-Order» поруч із ціною
+  onPreOrder?: (dish: Dish) => void;
 };
 
 // Модалка страви: фото ліворуч, склад і поживність праворуч (як у Figma)
-const DishModal = ({ id, onClose }: Props) => {
+const DishModal = ({ id, onClose, onPreOrder }: Props) => {
   const {
     data: dish,
     isLoading,
@@ -79,10 +82,22 @@ const DishModal = ({ id, onClose }: Props) => {
               </div>
             </dl>
 
-            <p className={css.price}>
-              {formatPrice(dish.price_cents)}
-              <span className={css.weight}>/{dish.weight_grams}g</span>
-            </p>
+            <div className={css.priceRow}>
+              <p className={css.price}>
+                {formatPrice(dish.price_cents)}
+                <span className={css.weight}>/{dish.weight_grams}g</span>
+              </p>
+
+              {onPreOrder && dish.is_available && (
+                <button
+                  type="button"
+                  className={css.preOrderBtn}
+                  onClick={() => onPreOrder(dish)}
+                >
+                  Pre-Order
+                </button>
+              )}
+            </div>
 
             {!dish.is_available && (
               <p className={css.soldOut}>Currently unavailable</p>

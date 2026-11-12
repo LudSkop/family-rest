@@ -66,32 +66,22 @@
   background-color: var(--bg-yellow);
 }
 
+/* «4 tables available» + підсумок фільтрів */
 .resultsHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 16px;
 }
 
 .resultsTitle {
   font-weight: 500;
-  font-size: 22px;
-  line-height: 1.3;
-  color: var(--text);
-}
-
-.clear {
-  padding: 4px 8px;
-  border-bottom: 1px solid var(--text);
-  background-color: transparent;
-  font-weight: 500;
   font-size: 14px;
+  line-height: 1.5;
   color: var(--text);
 }
 
-.clear:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.summary {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
 .status {
@@ -101,98 +91,112 @@
 
 .tables {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
-.table {
-  padding: 16px;
-  border-radius: 12px;
-  background-color: var(--white);
-}
-
-.tableName {
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.tableName span {
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.tableAddress {
-  margin-bottom: 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-.slots {
+/* ===== Порожній стан: «No Tables Available» ===== */
+.empty {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 16px 32px;
+  text-align: center;
 }
 
-.slot {
-  padding: 4px 10px;
-  border: 1px solid var(--input-border);
-  border-radius: 6px;
-  font-size: 13px;
-  line-height: 1.5;
+.emptyImage {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.emptyTitle {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4;
   color: var(--text);
 }
 
-/* Час, який шукали, — зелений */
-.slotChosen {
-  border-color: var(--accent);
-  background-color: var(--accent);
-  color: var(--white);
+.emptyText {
+  max-width: 320px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
+/* «Small Tertiary»: текст з лінією знизу */
+.showAll {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--text);
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.showAll:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ===== Tablet і Desktop: форма ліворуч, фото праворуч (як у Figma) ===== */
 @media (min-width: 768px) {
   .layout {
-    padding-block: 40px 56px;
-  }
-
-  .side {
-    min-height: 400px;
-  }
-
-  .results {
-    padding: 32px;
-  }
-
-  .tables {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ===== Desktop: форма ліворуч, фото праворуч (як у Figma) ===== */
-@media (min-width: 1440px) {
-  .layout {
     display: grid;
-    grid-template-columns: 432px 1fr;
-    gap: 40px;
-    min-height: calc(100vh - 68px);
-    padding-block: 48px;
+    grid-template-columns: 320px 1fr;
+    align-items: start;
+    gap: 24px;
+    padding-block: 40px 56px;
   }
 
   .formColumn {
     justify-content: flex-start;
   }
 
+  /* На планшеті фото — приблизно висоти форми з блоком підтримки */
   .side {
-    min-height: 600px;
+    height: 560px;
+  }
+
+  /* Табличка «Reserved» праворуч на фото — тримаємо її в кадрі */
+  .photo {
+    object-position: 75% center;
   }
 
   /* Довгий список столів гортається всередині картки, сторінка не росте */
   .results {
     position: absolute;
     inset: 0;
-    padding: 40px;
+    padding: 24px;
     overflow-y: auto;
+  }
+}
+
+@media (min-width: 1440px) {
+  .layout {
+    grid-template-columns: 432px 1fr;
+    align-items: stretch;
+    gap: 40px;
+    min-height: calc(100vh - 68px);
+    padding-block: 48px;
+  }
+
+  .side {
+    height: auto;
+    min-height: 600px;
+  }
+
+  .results {
+    padding: 40px;
+  }
+
+  .tables {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

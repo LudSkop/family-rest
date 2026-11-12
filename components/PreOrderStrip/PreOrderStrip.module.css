@@ -1,0 +1,22 @@
+/* Колір смуги — New Green/Green300 з Figma */
+.strip {
+  background-color: var(--green-300);
+}
+
+.strip p {
+  padding-block: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text);
+}
+
+.strip strong {
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .strip p {
+    font-size: 14px;
+  }
+}

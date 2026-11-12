@@ -96,6 +96,34 @@
   color: var(--accent-dark);
 }
 
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+/* «Large variant, Hug width» з примітки Figma */
+.preOrderBtn {
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 8px;
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.preOrderBtn:hover {
+  background: var(--accent-dark);
+}
+
 .weight {
   font-weight: 400;
   font-size: 12px;

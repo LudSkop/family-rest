@@ -5,9 +5,17 @@ import { useId, useState, useSyncExternalStore } from "react";
 import type { Location } from "@/types/location";
 import type { SearchTablesParams } from "@/lib/api/clientApi";
 
+export type BookingFormValues = {
+  locationId: string;
+  date: string;
+  time: string; // "HH:MM", ALL_TIMES або ""
+  guests: number;
+};
+
 type Props = {
   locations: Location[];
-  initialLocationId?: string;
+  // Щоб замінити значення ззовні (напр. «Show all slots»), батько міняє key
+  initialValues?: Partial<BookingFormValues>;
   isSearching: boolean;
   serverErrors: Errors;
   onSearch: (params: SearchTablesParams) => void;
@@ -28,6 +36,9 @@ const TIME_SLOTS = Array.from({ length: 24 }, (_, index) => {
   const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
   return `${hours}:${minutes % 60 === 0 ? "00" : "30"}`;
 });
+
+// «Show All» — шукаємо без часу: усі столи з вільним часом на цей день
+export const ALL_TIMES = "all";
 
 // Столи на 2 і 4 особи; більші компанії — лише телефоном
 const MAX_GUESTS = 4;
@@ -54,17 +65,17 @@ const subscribe = () => () => {};
 
 const BookingForm = ({
   locations,
-  initialLocationId = "",
+  initialValues = {},
   isSearching,
   serverErrors,
   onSearch,
 }: Props) => {
   const id = useId();
 
-  const [locationId, setLocationId] = useState(initialLocationId);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [guests, setGuests] = useState(1);
+  const [locationId, setLocationId] = useState(initialValues.locationId ?? "");
+  const [date, setDate] = useState(initialValues.date ?? "");
+  const [time, setTime] = useState(initialValues.time ?? "");
+  const [guests, setGuests] = useState(initialValues.guests ?? 1);
   const [errors, setErrors] = useState<Errors>({});
 
   // «Сьогодні» відомо лише в браузері: на сервері інший час і пояс,
@@ -89,7 +100,7 @@ const BookingForm = ({
       newErrors.date = "This date has already passed";
 
     if (!time) newErrors.time = "Choose time slot";
-    else if (isToday && now && time <= now.time)
+    else if (time !== ALL_TIMES && isToday && now && time <= now.time)
       newErrors.time = "This time has already passed";
 
     setErrors(newErrors);
@@ -97,7 +108,7 @@ const BookingForm = ({
 
     onSearch({
       date,
-      time,
+      time: time === ALL_TIMES ? undefined : time,
       party_size: guests,
       location_id: locationId || undefined,
     });
@@ -173,6 +184,7 @@ const BookingForm = ({
             <option value="" disabled>
               e.g. 10:00
             </option>
+            <option value={ALL_TIMES}>Show All</option>
             {TIME_SLOTS.map((slot) => (
               <option
                 key={slot}

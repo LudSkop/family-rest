@@ -16,10 +16,11 @@ type Toast = {
   id: number;
   message: string;
   variant: ToastVariant;
+  title?: string;
 };
 
 type ToastContextValue = {
-  showToast: (message: string, variant?: ToastVariant) => void;
+  showToast: (message: string, variant?: ToastVariant, title?: string) => void;
 };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -47,9 +48,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const showToast = useCallback(
-    (message: string, variant: ToastVariant = "success") => {
+    (message: string, variant: ToastVariant = "success", title?: string) => {
       const id = ++nextId;
-      setToasts((prev) => [...prev, { id, message, variant }]);
+      setToasts((prev) => [...prev, { id, message, variant, title }]);
       setTimeout(() => dismiss(id), TOAST_DURATION);
     },
     [dismiss],
@@ -67,7 +68,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         className={css.container}
         aria-live="polite"
       >
-        {toasts.map(({ id, message, variant }) => (
+        {toasts.map(({ id, message, variant, title }) => (
           <div
             key={id}
             className={`${css.toast} ${css[variant]}`}
@@ -78,7 +79,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             </span>
             <div className={css.message}>
               <p className={css.title}>
-                {variant === "success" ? "Success" : "Error"}
+                {title ?? (variant === "success" ? "Success" : "Error")}
               </p>
               <p>{message}</p>
             </div>

@@ -7,9 +7,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import DishCard from "@/components/DishCard/DishCard";
 import DishModal from "@/components/DishModal/DishModal";
+import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
+import { useToast } from "@/components/Toast/ToastProvider";
 import Pagination from "@/components/Pagination/Pagination";
 import { getDishes } from "@/lib/api/clientApi";
-import type { DishCategory, DishSort } from "@/types/dish";
+import type { Dish, DishCategory, DishSort } from "@/types/dish";
 
 const PAGE_SIZE = 12;
 
@@ -53,6 +55,16 @@ const Menu = () => {
   const page = parsePage(searchParams.get("page"));
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // У режимі передзамовлення на картках і в модалці з'являється «Pre-Order»
+  const { session } = usePreOrder();
+  const { showToast } = useToast();
+  const handlePreOrder = session
+    ? (dish: Dish) => {
+        // TODO (крок 5): додати страву в кошик цього бронювання
+        showToast(`${dish.name} — adding to the cart is coming next.`);
+      }
+    : undefined;
 
   const { data, isLoading, isError, isPlaceholderData } = useQuery({
     queryKey: ["dishes", { category, sort, page }],
@@ -136,7 +148,7 @@ const Menu = () => {
             </div>
 
             <label className={css.sort}>
-              <span className="visually-hidden">Sort dishes</span>
+              <span className={css.sortLabel}>Sort by:</span>
               <select value={sort} onChange={handleSort}>
                 {SORT_OPTIONS.map(({ value, label }) => (
                   <option key={value} value={value}>
@@ -170,7 +182,11 @@ const Menu = () => {
               >
                 {data.items.map((dish) => (
                   <li key={dish.id}>
-                    <DishCard dish={dish} onOpen={setSelectedId} />
+                    <DishCard
+                      dish={dish}
+                      onOpen={setSelectedId}
+                      onPreOrder={handlePreOrder}
+                    />
                   </li>
                 ))}
               </ul>
@@ -186,7 +202,11 @@ const Menu = () => {
       </section>
 
       {selectedId && (
-        <DishModal id={selectedId} onClose={() => setSelectedId(null)} />
+        <DishModal
+          id={selectedId}
+          onClose={() => setSelectedId(null)}
+          onPreOrder={handlePreOrder}
+        />
       )}
     </div>
   );

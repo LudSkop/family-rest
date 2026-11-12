@@ -7,6 +7,8 @@ import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import AuthModals from "@/components/AuthModals/AuthModals";
 import AuthErrorHandler from "@/components/AuthErrorHandler/AuthErrorHandler";
 import { ToastProvider } from "@/components/Toast/ToastProvider";
+import { PreOrderProvider } from "@/components/PreOrder/PreOrderProvider";
+import PreOrderStrip from "@/components/PreOrderStrip/PreOrderStrip";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -39,12 +41,15 @@ export default function RootLayout({
       <body>
         <TanStackProvider>
           <ToastProvider>
-            <Header />
-            <main>{children}</main>
-            <Suspense fallback={null}>
-              <AuthModals />
-              <AuthErrorHandler />
-            </Suspense>
+            <PreOrderProvider>
+              <Header />
+              <PreOrderStrip />
+              <main>{children}</main>
+              <Suspense fallback={null}>
+                <AuthModals />
+                <AuthErrorHandler />
+              </Suspense>
+            </PreOrderProvider>
           </ToastProvider>
         </TanStackProvider>
       </body>

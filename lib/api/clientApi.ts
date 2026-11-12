@@ -12,7 +12,7 @@ import type {
   DishSort,
 } from "@/types/dish";
 import type { Location, LocationDetails } from "@/types/location";
-import type { TablePage } from "@/types/booking";
+import type { Booking, InvitePreview, TablePage } from "@/types/booking";
 
 const nextServer = axios.create({
   baseURL: "/api/v1",
@@ -73,6 +73,54 @@ export const searchTables = async (
   const { data } = await nextServer.get<TablePage>("/bookings/tables", {
     params: { ...params, limit: 50 },
   });
+  return data;
+};
+
+export interface CreateBookingParams {
+  table_id: string;
+  starts_at: string; // як у слоті бекенда, з поясом
+  party_size: number;
+}
+
+export const createBooking = async (
+  params: CreateBookingParams,
+): Promise<Booking> => {
+  const { data } = await nextServer.post<Booking>("/bookings", params);
+  return data;
+};
+
+export const getBooking = async (bookingId: string): Promise<Booking> => {
+  const { data } = await nextServer.get<Booking>(
+    `/bookings/${encodeURIComponent(bookingId)}`,
+  );
+  return data;
+};
+
+export const getInviteCode = async (bookingId: string): Promise<string> => {
+  const { data } = await nextServer.get<{ code: string }>(
+    `/bookings/${encodeURIComponent(bookingId)}/invite`,
+  );
+  return data.code;
+};
+
+// ===== Invites =====
+
+export const getInvite = async (code: string): Promise<InvitePreview> => {
+  const { data } = await nextServer.get<InvitePreview>(
+    `/invites/${encodeURIComponent(code)}`,
+  );
+  return data;
+};
+
+// name — лише для гостя без акаунта (до 50 символів)
+export const joinInvite = async (
+  code: string,
+  name?: string,
+): Promise<Booking> => {
+  const { data } = await nextServer.post<Booking>(
+    `/invites/${encodeURIComponent(code)}/join`,
+    name ? { name } : {},
+  );
   return data;
 };
 

@@ -3,11 +3,23 @@
 import css from "./Booking.module.css";
 import Image from "next/image";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import BookingForm, { type Errors } from "@/components/BookingForm/BookingForm";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import BookingForm, {
+  ALL_TIMES,
+  type BookingFormValues,
+  type Errors,
+} from "@/components/BookingForm/BookingForm";
+import TableCard from "@/components/TableCard/TableCard";
+import BookingConfirmedModal from "@/components/BookingConfirmedModal/BookingConfirmedModal";
+import ConfirmBookingModal from "@/components/ConfirmBookingModal/ConfirmBookingModal";
+import { useToast } from "@/components/Toast/ToastProvider";
+import type { BookingTable, TableSlot } from "@/types/booking";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
+  createBooking,
   getApiError,
+  getApiStatus,
   getLocations,
   searchTables,
   type SearchTablesParams,
@@ -15,16 +27,32 @@ import {
 
 const SUPPORT_PHONE = "+380963610573";
 
-// "2026-11-12T10:00:00+04:00" → "10:00" (час ресторану, без перерахунку поясу)
-const slotTime = (startsAt: string) => startsAt.slice(11, 16);
+// "2026-10-17" → "Oct 17, 2026" (у UTC, щоб дата не зсунулась через пояс)
+const formatDate = (date: string) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
 
 const Booking = () => {
   const searchParams = useSearchParams();
-  // /booking?location=<id> — кнопка «Book a table» з модалки локації
-  const initialLocationId = searchParams.get("location") ?? "";
+  const router = useRouter();
+  const pathname = usePathname();
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const { data: user } = useCurrentUser();
 
   const [search, setSearch] = useState<SearchTablesParams | null>(null);
   const [serverErrors, setServerErrors] = useState<Errors>({});
+
+  // /booking?location=<id> — кнопка «Book a table» з модалки локації.
+  // formKey змінюємо, коли треба підставити у форму нові значення
+  const [formValues, setFormValues] = useState<Partial<BookingFormValues>>({
+    locationId: searchParams.get("location") ?? "",
+  });
+  const [formKey, setFormKey] = useState(0);
 
   const { data: locations = [] } = useQuery({
     queryKey: ["locations"],
@@ -36,7 +64,6 @@ const Booking = () => {
     data: result,
     isPending,
     isError,
-    reset,
   } = useMutation({
     mutationFn: searchTables,
     onError: (error) => {
@@ -52,11 +79,99 @@ const Booking = () => {
     },
   });
 
+  const openSignIn = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("auth", "sign-in");
+    router.push(`${pathname}?${params}`, { scroll: false });
+  };
+
+  // ===== Бронювання: клік по вільному часу =====
+  // Обраний стіл і час — чекають підтвердження у вікні «Book this table?»
+  const [selected, setSelected] = useState<{
+    table: BookingTable;
+    slot: TableSlot;
+  } | null>(null);
+
+  const booking = useMutation({
+    mutationFn: createBooking,
+    onSettled: () => setSelected(null),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      // Оновлюємо столи: щойно заброньований час стає зайнятим
+      if (search) mutate(search);
+    },
+    onError: (error) => {
+      const apiError = getApiError(error);
+
+      // Сесія закінчилась — просимо увійти знову
+      if (getApiStatus(error) === 401) {
+        queryClient.setQueryData(["me"], null);
+        openSignIn();
+        return;
+      }
+
+      // Час уже зайняли — оновлюємо столи
+      if (apiError?.code === "SLOT_UNAVAILABLE" && search) mutate(search);
+
+      showToast(
+        apiError?.message ?? "Could not book the table. Please try again.",
+        "error",
+      );
+    },
+  });
+
+  const handleSelectSlot = (table: BookingTable, slot: TableSlot) => {
+    if (!search) return;
+
+    // «If user is not Signed In — Sign In Flow»
+    if (!user) {
+      openSignIn();
+      return;
+    }
+
+    setSelected({ table, slot });
+  };
+
+  const confirmBooking = () => {
+    if (!selected || !search) return;
+
+    booking.mutate({
+      table_id: selected.table.id,
+      starts_at: selected.slot.starts_at,
+      party_size: search.party_size,
+    });
+  };
+
   const handleSearch = (params: SearchTablesParams) => {
     setServerErrors({});
     setSearch(params);
     mutate(params);
   };
+
+  // «Show all slots on <date>»: та сама дата й гості, усі локації, будь-який час
+  const showAllSlots = () => {
+    if (!search) return;
+
+    setFormValues({
+      locationId: "",
+      date: search.date,
+      time: ALL_TIMES,
+      guests: search.party_size,
+    });
+    setFormKey((prev) => prev + 1);
+    handleSearch({ date: search.date, party_size: search.party_size });
+  };
+
+  // «48 Rustaveli Avenue · Oct 17, 2026 · 11:00 · 2 guests»
+  const summary = search
+    ? [
+        locations.find((location) => location.id === search.location_id)
+          ?.address ?? "All Locations",
+        formatDate(search.date),
+        search.time ?? "All day",
+        `${search.party_size} ${search.party_size === 1 ? "guest" : "guests"}`,
+      ].join(" · ")
+    : "";
 
   const showResults =
     isPending || result || (isError && !Object.keys(serverErrors).length);
@@ -68,7 +183,8 @@ const Booking = () => {
         <div className={css.formColumn}>
           <BookingForm
             locations={locations}
-            initialLocationId={initialLocationId}
+            key={formKey}
+            initialValues={formValues}
             isSearching={isPending}
             serverErrors={serverErrors}
             onSearch={handleSearch}
@@ -94,20 +210,6 @@ const Booking = () => {
         <div className={css.side}>
           {showResults ? (
             <section className={css.results} aria-live="polite">
-              <div className={css.resultsHead}>
-                <h2 className={css.resultsTitle}>Available tables</h2>
-                <button
-                  type="button"
-                  className={css.clear}
-                  onClick={() => {
-                    reset();
-                    setSearch(null);
-                  }}
-                >
-                  Clear
-                </button>
-              </div>
-
               {isPending && (
                 <p className={css.status}>Searching for tables...</p>
               )}
@@ -118,39 +220,55 @@ const Booking = () => {
                 </p>
               )}
 
-              {result && result.items.length === 0 && (
-                <p className={css.status}>
-                  No free tables for this time. Try another time or location.
-                </p>
-              )}
+              {result && !isPending && (
+                <>
+                  <div className={css.resultsHead}>
+                    <h2 className={css.resultsTitle}>
+                      {result.total > 0
+                        ? `${result.total} ${result.total === 1 ? "table" : "tables"} available`
+                        : "No tables Available"}
+                    </h2>
+                    <p className={css.summary}>{summary}</p>
+                  </div>
 
-              {result && result.items.length > 0 && (
-                <ul className={css.tables}>
-                  {result.items.map((table) => (
-                    <li key={table.id} className={css.table}>
-                      <p className={css.tableName}>
-                        {table.label}
-                        <span> · up to {table.capacity} guests</span>
+                  {result.items.length > 0 ? (
+                    <ul className={css.tables}>
+                      {result.items.map((table) => (
+                        <li key={table.id}>
+                          <TableCard
+                            table={table}
+                            onSelect={handleSelectSlot}
+                            isBooking={booking.isPending}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className={css.empty}>
+                      <Image
+                        src="/image/no-tables.svg"
+                        alt=""
+                        width={477}
+                        height={465}
+                        className={css.emptyImage}
+                      />
+                      <h3 className={css.emptyTitle}>No Tables Available</h3>
+                      <p className={css.emptyText}>
+                        Try adjusting your date, time, or number of guests to
+                        find available tables.
                       </p>
-                      <p className={css.tableAddress}>
-                        {table.location.address}
-                      </p>
-
-                      <ul className={css.slots} aria-label="Free start times">
-                        {table.slots
-                          .filter((slot) => slot.available)
-                          .map((slot) => (
-                            <li
-                              key={slot.starts_at}
-                              className={`${css.slot} ${slotTime(slot.starts_at) === search?.time ? css.slotChosen : ""}`}
-                            >
-                              {slotTime(slot.starts_at)}
-                            </li>
-                          ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
+                      {search && (
+                        <button
+                          type="button"
+                          className={css.showAll}
+                          onClick={showAllSlots}
+                        >
+                          Show all slots on {formatDate(search.date)}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </section>
           ) : (
@@ -166,6 +284,22 @@ const Booking = () => {
           )}
         </div>
       </div>
+
+      {selected && search && (
+        <ConfirmBookingModal
+          table={selected.table}
+          slot={selected.slot}
+          partySize={search.party_size}
+          isBooking={booking.isPending}
+          onConfirm={confirmBooking}
+          // Поки бронювання відправляється, вікно не закриваємо
+          onClose={() => !booking.isPending && setSelected(null)}
+        />
+      )}
+
+      {booking.data && (
+        <BookingConfirmedModal booking={booking.data} onClose={booking.reset} />
+      )}
     </div>
   );
 };

@@ -137,6 +137,13 @@
   color: var(--text);
 }
 
+/* Хедер гостя в передзамовленні: лого ліворуч, кошик праворуч на всіх екранах.
+   .header.guestHeader сильніший за .header з медіазапиту (там display: grid) */
+.header.guestHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* ===== Burger ===== */
 .burger {
   display: flex;

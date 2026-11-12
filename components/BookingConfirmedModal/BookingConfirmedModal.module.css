@@ -1,0 +1,119 @@
+/* Як у Figma — вужча за модалки входу */
+@media (min-width: 768px) {
+  dialog.modal {
+    max-width: 520px;
+  }
+
+  dialog.modal > div {
+    padding: 40px 32px 32px;
+  }
+}
+
+.title {
+  margin-bottom: 24px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+/* Location / Date / Time / Guests */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.row dt {
+  font-weight: 500;
+}
+
+/* ===== Invite Link ===== */
+.invite {
+  padding-block: 20px 24px;
+}
+
+.inviteLabel {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.linkBox {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--success-border);
+  border-radius: 8px;
+  background-color: var(--success-bg);
+}
+
+.linkInput {
+  flex-grow: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.linkInput:focus {
+  outline: none;
+}
+
+.copyBtn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: transparent;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.copyBtn:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+.copyBtn:disabled {
+  opacity: 0.4;
+}
+
+.copyBtn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

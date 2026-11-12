@@ -11,6 +11,7 @@ import UserMenu from "@/components/UserMenu/UserMenu";
 import CartDrawer from "@/components/CartDrawer/CartDrawer";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
 import { logout } from "@/lib/api/clientApi";
 
 const NAV_LINKS = [
@@ -29,7 +30,12 @@ const Header = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const { session } = usePreOrder();
+
+  // «Guest variant Header» з Figma: гість без акаунта робить передзамовлення —
+  // у хедері лише лого й кошик
+  const isGuestPreOrder = Boolean(session) && !isUserLoading && !user;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -106,7 +112,9 @@ const Header = () => {
 
   return (
     <header className={css.headerWrapper}>
-      <div className={`container ${css.header}`}>
+      <div
+        className={`container ${css.header} ${isGuestPreOrder ? css.guestHeader : ""}`}
+      >
         <Link
           href="/"
           aria-label="Family Rest — home"
@@ -122,19 +130,23 @@ const Header = () => {
           />
         </Link>
 
-        <nav aria-label="Main navigation" className={css.nav}>
-          <ul className={css.navigation}>{navLinks}</ul>
-        </nav>
+        {!isGuestPreOrder && (
+          <nav aria-label="Main navigation" className={css.nav}>
+            <ul className={css.navigation}>{navLinks}</ul>
+          </nav>
+        )}
 
         {/* Праворуч: вхід / профіль, кошик і (на мобільному) бургер */}
         <div className={css.end}>
-          <div className={css.actions}>
-            {user ? (
-              <UserMenu user={user} onLogout={handleLogout} />
-            ) : (
-              guestActions
-            )}
-          </div>
+          {!isGuestPreOrder && (
+            <div className={css.actions}>
+              {user ? (
+                <UserMenu user={user} onLogout={handleLogout} />
+              ) : (
+                guestActions
+              )}
+            </div>
+          )}
 
           <button
             type="button"
@@ -153,24 +165,26 @@ const Header = () => {
             </svg>
           </button>
 
-          <button
-            type="button"
-            className={css.burger}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-menu"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-          >
-            <span className={css.burgerLine} />
-            <span className={css.burgerLine} />
-            <span className={css.burgerLine} />
-          </button>
+          {!isGuestPreOrder && (
+            <button
+              type="button"
+              className={css.burger}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+            >
+              <span className={css.burgerLine} />
+              <span className={css.burgerLine} />
+              <span className={css.burgerLine} />
+            </button>
+          )}
         </div>
       </div>
 
       {isCartOpen && <CartDrawer onClose={() => setIsCartOpen(false)} />}
 
-      {isMenuOpen && (
+      {isMenuOpen && !isGuestPreOrder && (
         <div id="mobile-menu" className={css.mobileMenu}>
           <div className="container">
             <nav aria-label="Mobile navigation">

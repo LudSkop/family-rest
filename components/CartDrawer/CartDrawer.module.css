@@ -78,6 +78,218 @@ dialog.drawer > div {
   color: var(--accent);
 }
 
+/* ===== Список страв (гортається, футер лишається внизу) ===== */
+.body {
+  flex-grow: 1;
+  min-height: 0;
+  padding: 20px 16px;
+  overflow-y: auto;
+}
+
+.subtitle {
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.imageWrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.itemName {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.remove {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px 0 0;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.remove:hover {
+  color: var(--error);
+}
+
+.remove svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.readyTime {
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.itemFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+/* − 1 + як у формі бронювання */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stepBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background-color: transparent;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--accent);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.stepBtn:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.stepBtn:disabled {
+  border-color: var(--input-border);
+  color: var(--placeholder);
+  cursor: not-allowed;
+}
+
+.count {
+  min-width: 24px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text);
+}
+
+.itemPrice {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--accent);
+}
+
+/* ===== Футер: Grand Total + Submit ===== */
+.footer {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  background-color: var(--white);
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.total strong {
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--accent);
+}
+
+.submit {
+  width: 100%;
+  height: 52px;
+  border-radius: 8px;
+  background-color: var(--disabled);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--white);
+}
+
+.submit:disabled {
+  cursor: not-allowed;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@media (min-width: 768px) {
+  .body {
+    padding: 24px;
+  }
+
+  .footer {
+    padding: 20px 24px 24px;
+  }
+}
+
 @keyframes slideIn {
   from {
     transform: translateX(100%);

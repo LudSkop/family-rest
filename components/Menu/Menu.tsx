@@ -8,6 +8,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import DishCard from "@/components/DishCard/DishCard";
 import DishModal from "@/components/DishModal/DishModal";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
+import { useCart } from "@/components/PreOrder/CartProvider";
 import { useToast } from "@/components/Toast/ToastProvider";
 import Pagination from "@/components/Pagination/Pagination";
 import { getDishes } from "@/lib/api/clientApi";
@@ -59,10 +60,15 @@ const Menu = () => {
   // У режимі передзамовлення на картках і в модалці з'являється «Pre-Order»
   const { session } = usePreOrder();
   const { showToast } = useToast();
+  const { addItem } = useCart();
   const handlePreOrder = session
     ? (dish: Dish) => {
-        // TODO (крок 5): додати страву в кошик цього бронювання
-        showToast(`${dish.name} — adding to the cart is coming next.`);
+        addItem(dish);
+        showToast(
+          `${dish.name} was added to your cart.`,
+          "success",
+          "Added to cart",
+        );
       }
     : undefined;
 

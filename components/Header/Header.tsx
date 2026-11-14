@@ -12,6 +12,7 @@ import CartDrawer from "@/components/CartDrawer/CartDrawer";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
+import { useCart } from "@/components/PreOrder/CartProvider";
 import { logout } from "@/lib/api/clientApi";
 
 const NAV_LINKS = [
@@ -32,6 +33,7 @@ const Header = () => {
   const { showToast } = useToast();
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const { session } = usePreOrder();
+  const { count: cartCount } = useCart();
 
   // «Guest variant Header» з Figma: гість без акаунта робить передзамовлення —
   // у хедері лише лого й кошик
@@ -151,7 +153,11 @@ const Header = () => {
           <button
             type="button"
             className={css.cartBtn}
-            aria-label="Cart"
+            aria-label={
+              cartCount > 0
+                ? `Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`
+                : "Cart"
+            }
             aria-haspopup="dialog"
             onClick={() => {
               closeMenu();
@@ -163,6 +169,11 @@ const Header = () => {
               <circle cx="9.5" cy="19.5" r="1.3" />
               <circle cx="17" cy="19.5" r="1.3" />
             </svg>
+            {cartCount > 0 && (
+              <span className={css.cartBadge} aria-hidden="true">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
           </button>
 
           {!isGuestPreOrder && (

@@ -80,6 +80,7 @@
 }
 
 .cartBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,6 +90,23 @@
   background-color: transparent;
   color: var(--text);
   transition: color 0.2s ease;
+}
+
+/* Жовтий лічильник на кошику, як у Figma */
+.cartBadge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background-color: var(--badge);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  color: var(--text);
 }
 
 .cartBtn:hover {

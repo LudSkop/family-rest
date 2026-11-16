@@ -13,7 +13,12 @@ import {
   usePreOrder,
 } from "@/components/PreOrder/PreOrderProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { getApiError, getInvite, joinInvite } from "@/lib/api/clientApi";
+import {
+  getApiError,
+  getInvite,
+  joinInvite,
+  refreshSession,
+} from "@/lib/api/clientApi";
 import {
   formatBookingDate,
   formatPeople,
@@ -43,7 +48,12 @@ const JoinInviteModal = ({ code }: Props) => {
   });
 
   const join = useMutation({
-    mutationFn: (guestName?: string) => joinInvite(code, guestName),
+    mutationFn: async (guestName?: string) => {
+      // Без свіжої access-cookie бекенд приєднає залогіненого як гостя,
+      // тож спершу оновлюємо сесію (як радить документація бекенда)
+      if (user) await refreshSession();
+      return joinInvite(code, guestName);
+    },
     onSuccess: (booking) => {
       // Гість у режимі передзамовлення для цього бронювання → меню
       startPreOrder(toPreOrderSession(booking));

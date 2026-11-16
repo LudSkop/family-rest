@@ -1,7 +1,7 @@
 // Запити з браузера йдуть на свій Next-сервер (/api/v1), а не напряму на бекенд.
 // Шляхи збігаються з бекендом один в один — так cookie сесії працюють без змін.
 
-import axios, { isAxiosError } from "axios";
+import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
 import type { ApiError } from "@/types/api";
 import type { User } from "@/types/user";
 import type {
@@ -23,6 +23,58 @@ import type {
 
 const nextServer = axios.create({
   baseURL: "/api/v1",
+});
+
+// ===== Оновлення сесії =====
+// Access-cookie живе недовго. Коли запит отримує 401, один раз оновлюємо сесію
+// (POST /auth/refresh — бекенд ставить нову пару cookie) і повторюємо запит.
+// Важливо: бекенд вважає повторно використаний refresh-токен крадіжкою і
+// завершує ВСІ сесії, тому одночасно може йти лише одне оновлення —
+// інші запити чекають на той самий проміс.
+
+let refreshPromise: Promise<boolean> | null = null;
+
+export const refreshSession = (): Promise<boolean> => {
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post("/api/v1/auth/refresh")
+      .then(() => true)
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+};
+
+// Запити, де 401 — це відповідь по суті, а не «сесія застаріла»
+const NO_REFRESH_PATHS = [
+  "/auth/login",
+  "/auth/refresh",
+  "/auth/logout",
+  "/auth/register",
+  "/auth/verify-email",
+  "/auth/resend-code",
+  "/auth/password-reset",
+];
+
+type RetriableConfig = InternalAxiosRequestConfig & { _retried?: boolean };
+
+nextServer.interceptors.response.use(undefined, async (error) => {
+  const config = error.config as RetriableConfig | undefined;
+  const isUnauthorized = isAxiosError(error) && error.response?.status === 401;
+  const canRetry =
+    config &&
+    !config._retried &&
+    !NO_REFRESH_PATHS.some((path) => config.url?.startsWith(path));
+
+  if (!isUnauthorized || !canRetry) throw error;
+
+  config._retried = true;
+  const refreshed = await refreshSession();
+  if (!refreshed) throw error; // сесії немає або вона завершена — справжній 401
+
+  return nextServer(config);
 });
 
 // ===== Dishes & locations =====

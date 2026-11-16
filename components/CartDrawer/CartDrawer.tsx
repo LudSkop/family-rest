@@ -25,12 +25,77 @@ const TrashIcon = () => (
   </svg>
 );
 
+const NOTE_MAX_LENGTH = 200;
+
+// Коментар до страви («No onions please»): бекенд зберігає його разом зі стравою
+const NoteField = ({
+  dishName,
+  note,
+  onSave,
+}: {
+  dishName: string;
+  note: string | null;
+  onSave: (note: string) => void;
+}) => {
+  const [draft, setDraft] = useState<string | null>(null);
+  const isEditing = draft !== null;
+
+  const save = () => {
+    if (draft !== null && draft.trim() !== (note ?? "")) onSave(draft);
+    setDraft(null);
+  };
+
+  if (isEditing) {
+    return (
+      <input
+        className={css.noteInput}
+        value={draft}
+        maxLength={NOTE_MAX_LENGTH}
+        placeholder="e.g. No onions please"
+        aria-label={`Comment for ${dishName}`}
+        autoFocus
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={save}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") save();
+          if (event.key === "Escape") {
+            event.stopPropagation(); // не закривати весь кошик
+            setDraft(null);
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={note ? css.noteText : css.noteAdd}
+      onClick={() => setDraft(note ?? "")}
+      aria-label={
+        note ? `Edit comment for ${dishName}` : `Add comment for ${dishName}`
+      }
+    >
+      {note ?? "+ Add comment"}
+    </button>
+  );
+};
+
 // Бічна панель кошика: страви передзамовлення, Grand Total і Submit
 const CartDrawer = ({ onClose }: Props) => {
   const { session } = usePreOrder();
   const router = useRouter();
-  const { items, totalCents, setQuantity, removeItem, submit, isSubmitting } =
-    useCart();
+  const {
+    items,
+    totalCents,
+    setQuantity,
+    removeItem,
+    setNote,
+    clear,
+    submit,
+    isSubmitting,
+  } = useCart();
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
 
   // Власник після Submit бачить модалку «Pre-Order Submitted» (Figma owner),
   // гість — окрему сторінку «Pre-Order Submitted!» (Figma guest)
@@ -142,7 +207,11 @@ const CartDrawer = ({ onClose }: Props) => {
                     <p className={css.readyTime}>
                       {readyTime(item.dish.prep_minutes)}
                     </p>
-                    {item.note && <p className={css.note}>{item.note}</p>}
+                    <NoteField
+                      dishName={item.dish.name}
+                      note={item.note}
+                      onSave={(note) => setNote(item.dish.id, note)}
+                    />
 
                     <div className={css.itemFoot}>
                       <div
@@ -195,15 +264,53 @@ const CartDrawer = ({ onClose }: Props) => {
               <strong>{formatPrice(totalCents)}</strong>
             </p>
 
-            <button
-              type="button"
-              className={`${css.submit} ${hasSoldOut ? "" : css.submitActive}`}
-              onClick={handleSubmit}
-              disabled={hasSoldOut || isSubmitting}
-              aria-describedby={hasSoldOut ? "submit-hint" : undefined}
-            >
-              {isSubmitting ? "Submitting..." : "Submit Pre-Order"}
-            </button>
+            {isConfirmingClear ? (
+              <div className={css.confirmClear} role="alert">
+                <p>Remove all dishes you haven&apos;t submitted yet?</p>
+                <div className={css.buttons}>
+                  <button
+                    type="button"
+                    className={css.secondaryBtn}
+                    onClick={() => setIsConfirmingClear(false)}
+                  >
+                    Keep
+                  </button>
+                  <button
+                    type="button"
+                    className={css.dangerBtn}
+                    onClick={async () => {
+                      setIsConfirmingClear(false);
+                      await clear();
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Власник (Figma): «Cancel Changes» + «Submit Pre-Order»
+              <div className={isOwner ? css.buttons : undefined}>
+                {isOwner && (
+                  <button
+                    type="button"
+                    className={css.secondaryBtn}
+                    onClick={() => setIsConfirmingClear(true)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel Changes
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={`${css.submit} ${hasSoldOut ? "" : css.submitActive}`}
+                  onClick={handleSubmit}
+                  disabled={hasSoldOut || isSubmitting}
+                  aria-describedby={hasSoldOut ? "submit-hint" : undefined}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Pre-Order"}
+                </button>
+              </div>
+            )}
             {hasSoldOut && (
               <p id="submit-hint" className={css.hint}>
                 Remove sold-out dishes to submit your pre-order.

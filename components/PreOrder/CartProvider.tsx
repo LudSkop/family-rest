@@ -1,11 +1,18 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
 import { useToast } from "@/components/Toast/ToastProvider";
 import {
   getApiError,
+  getApiStatus,
   getCart,
   removeCartItem,
   setCartItem,
@@ -69,6 +76,9 @@ type CartContextValue = {
   addItem: (dish: Dish) => void;
   setQuantity: (dishId: string, quantity: number) => void;
   removeItem: (dishId: string) => void;
+  setNote: (dishId: string, note: string) => void;
+  // «Cancel Changes»: прибрати з чернетки все, що ще не відправлено
+  clear: () => Promise<void>;
   submit: () => Promise<SubmittedPart | null>;
   isSubmitting: boolean;
 };
@@ -81,16 +91,40 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const { session } = usePreOrder();
   const bookingId = session?.bookingId;
 
-  const { data: cart = EMPTY_CART, isLoading } = useQuery({
+  const {
+    data: cart = EMPTY_CART,
+    isLoading,
+    error: cartError,
+  } = useQuery({
     queryKey: cartKey(bookingId ?? "none"),
     queryFn: () => getCart(bookingId!),
     enabled: Boolean(bookingId),
     retry: false,
   });
 
+  // Бронювання могли скасувати або гостя прибрали, поки він збирав кошик:
+  // просимо PreOrderProvider перевірити бронювання — він завершить режим і пояснить
+  const recheckBooking = useCallback(() => {
+    if (bookingId)
+      queryClient.invalidateQueries({
+        queryKey: ["bookings", bookingId],
+        exact: true,
+      });
+  }, [bookingId, queryClient]);
+
+  useEffect(() => {
+    if (getApiStatus(cartError) === 404) recheckBooking();
+  }, [cartError, recheckBooking]);
+
   const showError = useCallback(
     (error: unknown) => {
       const apiError = getApiError(error);
+      if (
+        apiError?.code === "PREORDER_CLOSED" ||
+        apiError?.code === "BOOKING_NOT_FOUND"
+      )
+        recheckBooking();
+
       showToast(
         CART_ERRORS[apiError?.code ?? ""] ??
           apiError?.message ??
@@ -98,7 +132,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         "error",
       );
     },
-    [showToast],
+    [showToast, recheckBooking],
   );
 
   const mutationKey = ["cart-update", bookingId];
@@ -228,6 +262,50 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     [setQuantity],
   );
 
+  const setNote = useCallback(
+    (dishId: string, note: string) => {
+      if (!bookingId) return;
+      const line = findLine(dishId);
+      if (!line) return;
+      const trimmed = note.trim() || null; // порожній коментар = без коментаря
+
+      queryClient.setQueryData<Cart>(cartKey(bookingId), (current) =>
+        current
+          ? {
+              ...current,
+              items: current.items.map((item) =>
+                item.dish.id === dishId ? { ...item, note: trimmed } : item,
+              ),
+            }
+          : current,
+      );
+      setItemMutation.mutate({
+        bookingId,
+        dishId,
+        quantity: line.quantity,
+        note: trimmed,
+      });
+    },
+    [bookingId, findLine, queryClient, setItemMutation],
+  );
+
+  const clear = useCallback(async () => {
+    if (!bookingId) return;
+    const lines =
+      queryClient.getQueryData<Cart>(cartKey(bookingId))?.items ?? [];
+    queryClient.setQueryData(cartKey(bookingId), EMPTY_CART);
+
+    try {
+      await Promise.all(
+        lines.map((line) => removeCartItem(bookingId, line.dish.id)),
+      );
+    } catch (error) {
+      showError(error);
+    } finally {
+      queryClient.invalidateQueries({ queryKey: cartKey(bookingId) });
+    }
+  }, [bookingId, queryClient, showError]);
+
   const submit = useCallback(async () => {
     try {
       return await submitMutation.mutateAsync();
@@ -247,6 +325,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       addItem,
       setQuantity,
       removeItem,
+      setNote,
+      clear,
       submit,
       isSubmitting: submitMutation.isPending,
     }),
@@ -257,6 +337,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       addItem,
       setQuantity,
       removeItem,
+      setNote,
+      clear,
       submit,
       submitMutation.isPending,
     ],

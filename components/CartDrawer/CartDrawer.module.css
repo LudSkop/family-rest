@@ -308,12 +308,93 @@ dialog.drawer > div {
   vertical-align: middle;
 }
 
-.note {
-  margin: -6px 0 8px;
-  font-style: italic;
+/* ===== Коментар до страви ===== */
+.noteAdd,
+.noteText {
+  align-self: flex-start;
+  margin: -4px 0 8px;
+  padding: 0;
+  background-color: transparent;
   font-size: 12px;
   line-height: 1.5;
+  text-align: left;
+}
+
+.noteAdd {
+  color: var(--accent);
+}
+
+.noteText {
+  font-style: italic;
   color: var(--text-muted);
+}
+
+.noteAdd:hover,
+.noteText:hover {
+  text-decoration: underline;
+}
+
+.noteInput {
+  width: 100%;
+  height: 32px;
+  margin: -4px 0 8px;
+  padding: 0 8px;
+  border: 1px solid var(--focus);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.noteInput:focus {
+  outline: none;
+}
+
+/* ===== «Cancel Changes» + «Submit Pre-Order» ===== */
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.secondaryBtn,
+.dangerBtn {
+  height: 52px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.secondaryBtn {
+  border: 1.4px solid var(--accent);
+  background-color: var(--white);
+  color: var(--accent);
+}
+
+.secondaryBtn:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.dangerBtn {
+  border: 1.4px solid var(--error);
+  background-color: var(--white);
+  color: var(--error);
+}
+
+.dangerBtn:hover {
+  background-color: var(--error);
+  color: var(--white);
+}
+
+.confirmClear p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text);
 }
 
 /* ===== Модалка власника «Pre-Order Submitted» (по центру, не панель) ===== */

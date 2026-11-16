@@ -36,23 +36,34 @@
 ## Крок 6. Кошик — вигляд ✅
 - [x] Рядок: фото, назва, «Expected ready time», − 1 +, 🗑, ціна
 - [x] Роздільник під «Cart»; футер притиснутий донизу: «Grand Total» + зелена сума, «Submit Pre-Order»
-- [ ] Порожній стан — зараз заглушка `public/image/cart-basket.svg`; замінити ілюстрацією з Figma
+- [x] Порожній стан — ілюстрація `public/image/cart-basket.svg` (погоджено)
 
-## Крок 7. Submit і «Pre-Order Submitted!» ⏳ чекає API бекенда
-- [ ] ✓, «Your selections have been added to <ім'я>'s table», дані бронювання, «Your items», «Total»
-- [ ] «Create New Pre-Order» → меню з порожнім кошиком для того самого бронювання
-- [ ] Поки немає API — Submit неактивний з підказкою
+## Крок 7. Кошик на бекенді + Submit ✅ (2026-11-16)
+Бекенд тепер тримає чернетку кошика сам — для кожного учасника бронювання (власник за сесією, гість за `guest_token`):
+`GET /bookings/{id}/cart`, `PUT /bookings/{id}/cart/items/{dish_id}` `{quantity, note}`, `DELETE …/cart/items/{dish_id}`,
+`POST /bookings/{id}/cart/submit` (частина фінальна, кошик стає порожнім), `GET /bookings/{id}/my-pre-order`.
+- [x] Route Handlers для 5 запитів (пересилають cookie)
+- [x] `CartProvider` переробити з localStorage на бекенд (useQuery + мутації); лічильник і кошик лишаються як є
+- [x] «Expected ready time – N minutes» з `prep_minutes` замість 10 хв
+- [x] Ціни з `line_total_cents` / `total_cents` (актуальні ціни меню)
+- [x] Sold Out у кошику (`is_available: false`): не можна збільшити, Submit заблоковано (`DISH_UNAVAILABLE`)
+- [x] Submit Pre-Order → екран «Pre-Order Submitted!»: ✓, «added to <ім'я>'s table», дані бронювання, «Your items», «Total»
+- [x] «Create New Pre-Order» → меню з порожнім кошиком (бекенд сам його очищає)
+- [x] Помилки: `PREORDER_CLOSED` (закрито / бронювання ще PENDING), `CART_EMPTY`, `QUANTITY_TOO_LARGE`
+- [x] Нові статуси бронювання `PENDING` / `REJECTED` — врахувати на Reservations
+- [ ] (опційно) коментар до страви — поле `note` (у Figma «No onions please»)
+- [x] Власник після Submit — модалка «Pre-Order Submitted» + «View Reservations»; гість — сторінка `/pre-order/submitted`
 
-## Крок 8. Сторінка Reservations — список бронювань (власник)
+## Крок 8. Сторінка Reservations — список бронювань (власник) ✅
 Бекенд готовий: `GET /bookings` (свої + ті, до яких приєднався), `POST /bookings/{id}/cancel`, `GET /bookings/{id}/invite`
-- [ ] Картки бронювань у 3 колонки: статус зверху (Reserved / In Progress / Completed / Cancelled — свій колір), адреса, дата, час, гості
-- [ ] Статус рахуємо на фронті: `CANCELLED` → Cancelled; зараз між `starts_at` і `ends_at` → In Progress; минуле → Completed; інакше Reserved
-- [ ] 🗑 — скасувати бронювання (з підтвердженням; `CANCELLATION_CLOSED` → повідомлення)
-- [ ] «Invite Guests» + текст «Share link with your guests…» — копіювати посилання-запрошення (toast «Link copied!»)
-- [ ] «Add Pre-Order» → меню в режимі передзамовлення для цього бронювання
-- [ ] Вкладки-фільтри «All (N)» / «Upcoming» / …
+- [x] Картки бронювань у 3 колонки: статус зверху (Reserved / In Progress / Completed / Cancelled — свій колір), адреса, дата, час, гості
+- [x] Статус рахуємо на фронті: `CANCELLED` → Cancelled; зараз між `starts_at` і `ends_at` → In Progress; минуле → Completed; інакше Reserved
+- [x] 🗑 — скасувати бронювання (з підтвердженням; `CANCELLATION_CLOSED` → повідомлення)
+- [x] «Invite Guests» + текст «Share link with your guests…» — копіювати посилання-запрошення (toast «Link copied!»)
+- [x] «Add Pre-Order» → меню в режимі передзамовлення для цього бронювання
+- [x] Вкладки-фільтри «All (N)» / «Upcoming» / …
 - [ ] ⏳ «Pre-orders: 4/4», «Group Pre-Order» — чекають API передзамовлення
-- [ ] ⏳ «Leave Feedback» / «Update Feedback» — на бекенді немає відгуків
+- ~~«Leave Feedback» / «Update Feedback»~~ — відгуків у проєкті не буде (рішення 2026-11-16)
 
 ## Крок 9. Передзамовлення власника ⏳ чекає API бекенда
 - [ ] Хедер власника: меню + Reservations + кошик з лічильником + профіль; та сама зелена смуга
@@ -66,11 +77,15 @@
 - [ ] Оновлення сторінки, повторне відкриття посилання, запрошення закрилось під час замовлення
 - [ ] Продакшн-збірка, перевірка `/join/...` на Vercel
 
+## Нове на бекенді (2026-11-16), ще не зроблено
+- Компанії 5–8 гостей: бронювання-запит `PENDING` (столи на 6 і 8). Форма Book a Table зараз до 4 гостей і «call us for >4» — оновити до 8
+- Сповіщення `GET /notifications` (BOOKING_REQUEST_APPROVED / REJECTED) — можливо, це помаранчева крапка на картці
+- Немає API для Group Pre-Order власника (замовлення гостей, статуси Sent/Confirmed/Rejected, Remove Guest, «Pre-orders N/M»)
+
 ## Відкриті питання
 - Звідки «Expected ready time – 10 minutes»? (бекенд не віддає)
 - Що бачить користувач після «Pre-Order»: toast, лічильник?
 - API передзамовлення (кроки 7, 9) — уточнити у бекенда; станом на 2026-11-12 ендпоінтів немає
-- API відгуків («Leave Feedback») — на бекенді немає
 - Мітки страв «Vegetarian», «Lactose free» у модалці — бекенд не віддає (у `DishResponse` немає таких полів)
 - Страви без фото в Group Pre-Order (кружечок з літерою «G», «F») — це страви з меню без `image_url`?
 - Мобільні макети цих екранів

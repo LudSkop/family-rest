@@ -12,6 +12,7 @@ export interface Dish {
   weight_grams: number;
   is_available: boolean;
   popularity: number;
+  prep_minutes: number;
   image_url: string;
 }
 

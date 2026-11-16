@@ -11,7 +11,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { getApiStatus, getBooking } from "@/lib/api/clientApi";
 import type { Booking, PreOrderSession } from "@/types/booking";
-import { clearStoredCart } from "@/components/PreOrder/CartProvider";
 
 const STORAGE_KEY = "family-rest:pre-order";
 
@@ -45,10 +44,6 @@ const getSnapshot = () => {
 };
 
 const writeSession = (session: PreOrderSession | null) => {
-  // Передзамовлення закінчилось — кошик цього бронювання більше не потрібен
-  const previous = getSnapshot();
-  if (!session && previous) clearStoredCart(previous.bookingId);
-
   try {
     if (session) localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     else localStorage.removeItem(STORAGE_KEY);

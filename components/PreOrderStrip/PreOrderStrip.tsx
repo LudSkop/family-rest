@@ -1,13 +1,17 @@
 "use client";
 
 import css from "./PreOrderStrip.module.css";
+import { usePathname } from "next/navigation";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
 import { formatBookingDate, formatTimeRange } from "@/lib/utils/bookingTime";
 
 // Зелена смуга під хедером, поки триває передзамовлення (як у Figma)
 const PreOrderStrip = () => {
   const { session } = usePreOrder();
-  if (!session) return null;
+  const pathname = usePathname();
+
+  // На екрані «Pre-Order Submitted!» смуги немає (як у Figma)
+  if (!session || pathname === "/pre-order/submitted") return null;
 
   const { location, table, starts_at, ends_at } = session;
 

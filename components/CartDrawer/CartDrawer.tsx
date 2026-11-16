@@ -3,8 +3,11 @@
 import css from "./CartDrawer.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal/Modal";
-import { MAX_QUANTITY, useCart } from "@/components/PreOrder/CartProvider";
+import { useCart } from "@/components/PreOrder/CartProvider";
+import ButtonLink from "@/components/ButtonLink/ButtonLink";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
 import { formatPrice } from "@/lib/utils/formatPrice";
 
@@ -12,8 +15,9 @@ type Props = {
   onClose: () => void;
 };
 
-// Бекенд не віддає час приготування — поки однаковий для всіх страв (як у Figma)
-const READY_TIME = "Expected ready time – 10 minutes";
+// prep_minutes з бекенда → «Expected ready time – 15 minutes»
+const readyTime = (minutes: number) =>
+  `Expected ready time – ${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
 
 const TrashIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -24,9 +28,48 @@ const TrashIcon = () => (
 // Бічна панель кошика: страви передзамовлення, Grand Total і Submit
 const CartDrawer = ({ onClose }: Props) => {
   const { session } = usePreOrder();
-  const { items, totalCents, setQuantity, removeItem } = useCart();
+  const router = useRouter();
+  const { items, totalCents, setQuantity, removeItem, submit, isSubmitting } =
+    useCart();
+
+  // Власник після Submit бачить модалку «Pre-Order Submitted» (Figma owner),
+  // гість — окрему сторінку «Pre-Order Submitted!» (Figma guest)
+  const [isSentToOwner, setIsSentToOwner] = useState(false);
 
   const isOwner = session?.role === "OWNER";
+  const hasSoldOut = items.some((item) => !item.dish.is_available);
+
+  const handleSubmit = async () => {
+    const part = await submit();
+    if (!part || !session) return;
+
+    if (isOwner) setIsSentToOwner(true);
+    else {
+      onClose();
+      router.push("/pre-order/submitted");
+    }
+  };
+
+  if (isSentToOwner) {
+    return (
+      <Modal
+        onClose={onClose}
+        labelledBy="sent-title"
+        className={css.sentModal}
+      >
+        <h2 id="sent-title" className={css.sentTitle}>
+          Pre-Order Submitted
+        </h2>
+        <p className={css.sentText}>Your Pre-Order was sent successfully.</p>
+        <p className={css.sentText}>
+          Wait for the confirmation from the restaurant.
+        </p>
+        <ButtonLink href="/reservations" onClick={onClose}>
+          View Reservations
+        </ButtonLink>
+      </Modal>
+    );
+  }
 
   return (
     <Modal onClose={onClose} labelledBy="cart-title" className={css.drawer}>
@@ -65,10 +108,13 @@ const CartDrawer = ({ onClose }: Props) => {
 
             <ul className={css.items}>
               {items.map((item) => (
-                <li key={item.dishId} className={css.item}>
+                <li
+                  key={item.dish.id}
+                  className={`${css.item} ${item.dish.is_available ? "" : css.itemSoldOut}`}
+                >
                   <div className={css.imageWrapper}>
                     <Image
-                      src={item.image_url}
+                      src={item.dish.image_url}
                       alt=""
                       fill
                       sizes="64px"
@@ -78,29 +124,37 @@ const CartDrawer = ({ onClose }: Props) => {
 
                   <div className={css.info}>
                     <div className={css.itemHead}>
-                      <p className={css.itemName}>{item.name}</p>
+                      <p className={css.itemName}>
+                        {item.dish.name}
+                        {!item.dish.is_available && (
+                          <span className={css.soldOutBadge}>Sold Out</span>
+                        )}
+                      </p>
                       <button
                         type="button"
                         className={css.remove}
-                        onClick={() => removeItem(item.dishId)}
-                        aria-label={`Remove ${item.name}`}
+                        onClick={() => removeItem(item.dish.id)}
+                        aria-label={`Remove ${item.dish.name}`}
                       >
                         <TrashIcon />
                       </button>
                     </div>
-                    <p className={css.readyTime}>{READY_TIME}</p>
+                    <p className={css.readyTime}>
+                      {readyTime(item.dish.prep_minutes)}
+                    </p>
+                    {item.note && <p className={css.note}>{item.note}</p>}
 
                     <div className={css.itemFoot}>
                       <div
                         className={css.stepper}
                         role="group"
-                        aria-label={`Quantity of ${item.name}`}
+                        aria-label={`Quantity of ${item.dish.name}`}
                       >
                         <button
                           type="button"
                           className={css.stepBtn}
                           onClick={() =>
-                            setQuantity(item.dishId, item.quantity - 1)
+                            setQuantity(item.dish.id, item.quantity - 1)
                           }
                           disabled={item.quantity <= 1}
                           aria-label="Decrease quantity"
@@ -114,9 +168,10 @@ const CartDrawer = ({ onClose }: Props) => {
                           type="button"
                           className={css.stepBtn}
                           onClick={() =>
-                            setQuantity(item.dishId, item.quantity + 1)
+                            setQuantity(item.dish.id, item.quantity + 1)
                           }
-                          disabled={item.quantity >= MAX_QUANTITY}
+                          // Розпродану страву можна лише зменшити чи прибрати
+                          disabled={!item.dish.is_available}
                           aria-label="Increase quantity"
                         >
                           +
@@ -124,7 +179,7 @@ const CartDrawer = ({ onClose }: Props) => {
                       </div>
 
                       <p className={css.itemPrice}>
-                        {formatPrice(item.price_cents * item.quantity)}
+                        {formatPrice(item.line_total_cents)}
                       </p>
                     </div>
                   </div>
@@ -140,18 +195,20 @@ const CartDrawer = ({ onClose }: Props) => {
               <strong>{formatPrice(totalCents)}</strong>
             </p>
 
-            {/* TODO (крок 7): на бекенді ще немає API передзамовлення */}
             <button
               type="button"
-              className={css.submit}
-              disabled
-              aria-describedby="submit-hint"
+              className={`${css.submit} ${hasSoldOut ? "" : css.submitActive}`}
+              onClick={handleSubmit}
+              disabled={hasSoldOut || isSubmitting}
+              aria-describedby={hasSoldOut ? "submit-hint" : undefined}
             >
-              Submit Pre-Order
+              {isSubmitting ? "Submitting..." : "Submit Pre-Order"}
             </button>
-            <p id="submit-hint" className={css.hint}>
-              Sending pre-orders to the restaurant is coming soon.
-            </p>
+            {hasSoldOut && (
+              <p id="submit-hint" className={css.hint}>
+                Remove sold-out dishes to submit your pre-order.
+              </p>
+            )}
           </div>
         </>
       )}

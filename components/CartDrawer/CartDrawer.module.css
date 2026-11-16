@@ -268,8 +268,81 @@ dialog.drawer > div {
   color: var(--white);
 }
 
+.submitActive {
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+}
+
+.submitActive:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
 .submit:disabled {
   cursor: not-allowed;
+}
+
+.submitActive:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+/* Розпродана страва в кошику */
+.itemSoldOut .imageWrapper,
+.itemSoldOut .readyTime {
+  opacity: 0.45;
+}
+
+.soldOutBadge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background-color: var(--error-bg);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 18px;
+  color: var(--error);
+  vertical-align: middle;
+}
+
+.note {
+  margin: -6px 0 8px;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ===== Модалка власника «Pre-Order Submitted» (по центру, не панель) ===== */
+@media (min-width: 768px) {
+  dialog.sentModal {
+    max-width: 440px;
+  }
+
+  dialog.sentModal > div {
+    padding: 40px 32px 32px;
+  }
+}
+
+.sentTitle {
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.sentText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.sentText:last-of-type {
+  margin-bottom: 24px;
 }
 
 .hint {

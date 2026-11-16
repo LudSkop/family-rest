@@ -27,7 +27,7 @@ export interface TablePage {
   offset: number;
 }
 
-export type BookingStatus = "CONFIRMED" | "CANCELLED";
+export type BookingStatus = "CONFIRMED" | "CANCELLED" | "PENDING" | "REJECTED";
 export type ParticipantRole = "OWNER" | "GUEST";
 
 export interface Participant {
@@ -46,6 +46,8 @@ export interface Booking {
   table: { id: string; label: string; capacity: number };
   location: BookingLocation;
   role: ParticipantRole;
+  // Мій запис серед учасників
+  participant_id: string;
   participants: Participant[];
 }
 
@@ -71,4 +73,41 @@ export interface PreOrderSession {
   party_size: number;
   table: { id: string; label: string; capacity: number };
   location: BookingLocation;
+}
+
+// ===== Кошик і передзамовлення (GET /bookings/{id}/cart, /my-pre-order) =====
+
+export interface CartDish {
+  id: string;
+  name: string;
+  price_cents: number;
+  image_url: string;
+  is_available: boolean;
+  prep_minutes: number;
+}
+
+export interface CartLine {
+  id: string;
+  dish: CartDish;
+  quantity: number;
+  note: string | null;
+  line_total_cents: number;
+}
+
+export interface Cart {
+  items: CartLine[];
+  total_cents: number;
+}
+
+// Відправлена частина передзамовлення (фінальна)
+export interface SubmittedPart {
+  id: string;
+  submitted_at: string;
+  items: CartLine[];
+  total_cents: number;
+}
+
+export interface MyPreOrder {
+  parts: SubmittedPart[];
+  total_cents: number;
 }

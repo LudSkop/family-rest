@@ -50,7 +50,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const showToast = useCallback(
     (message: string, variant: ToastVariant = "success", title?: string) => {
       const id = ++nextId;
-      setToasts((prev) => [...prev, { id, message, variant, title }]);
+      // Показуємо лише останнє повідомлення: нове замінює попереднє,
+      // щоб при швидких кліках toast-и не накривали сторінку
+      setToasts([{ id, message, variant, title }]);
       setTimeout(() => dismiss(id), TOAST_DURATION);
     },
     [dismiss],

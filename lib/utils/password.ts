@@ -28,7 +28,8 @@ export const getStrength = (value: string) => {
   ];
   const score = checks.filter(Boolean).length;
 
-  if (score === checks.length) return { label: "Strong", level: "strong" } as const;
+  if (score === checks.length)
+    return { label: "Strong", level: "strong" } as const;
   if (score >= 3) return { label: "Medium", level: "medium" } as const;
   return { label: "Weak", level: "weak" } as const;
 };

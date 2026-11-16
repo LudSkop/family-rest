@@ -101,6 +101,71 @@
   color: var(--accent);
 }
 
+/* ===== Список бронювань ===== */
+.list {
+  padding-block: 24px 48px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 18px;
+  background-color: var(--white);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.tab:hover {
+  border-color: var(--accent);
+}
+
+.tab[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Кружечок з кількістю, як «All (5)» у Figma */
+.tabCount {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background-color: var(--border);
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  color: var(--text);
+}
+
+.tab[aria-pressed="true"] .tabCount {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+/* 1 / 2 / 3 картки в ряд */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
 @media (min-width: 768px) {
   .greetingInner {
     flex-direction: row;
@@ -114,5 +179,19 @@
 
   .support {
     max-width: 439px;
+  }
+
+  .list {
+    padding-block: 32px 56px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

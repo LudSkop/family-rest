@@ -1,0 +1,188 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--white);
+  box-shadow: 0 4px 16px rgba(35, 35, 35, 0.04);
+}
+
+/* Смужка статусу зверху — свій колір для кожного статусу (як у Figma) */
+.status {
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text);
+}
+
+.PENDING .status {
+  background-color: #ececec;
+}
+
+.REJECTED .status {
+  background-color: #f8e1e3;
+}
+
+.RESERVED .status {
+  background-color: #dfe7f8;
+}
+
+.IN_PROGRESS .status {
+  background-color: #fbefc8;
+}
+
+.COMPLETED .status {
+  background-color: #dfefdc;
+}
+
+.CANCELLED .status {
+  background-color: #f8e1e3;
+}
+
+.body {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: transparent;
+}
+
+.trash .icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text);
+  transition: stroke 0.2s ease;
+}
+
+.trash:hover .icon {
+  stroke: var(--error);
+}
+
+/* «Share link…» + «Invite Guests» */
+.invite {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.invite + .details {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.details dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table {
+  color: var(--text-muted);
+}
+
+.pendingNote {
+  margin-top: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.primaryBtn,
+.outlineBtn {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.primaryBtn {
+  background-color: var(--accent-dark);
+  color: var(--white);
+}
+
+.primaryBtn:hover {
+  background-color: var(--accent);
+}
+
+.outlineBtn {
+  border: 1px solid var(--accent);
+  background-color: var(--white);
+  color: var(--accent);
+}
+
+.outlineBtn:hover {
+  background-color: var(--accent);
+  color: var(--white);
+}

@@ -12,7 +12,14 @@ import type {
   DishSort,
 } from "@/types/dish";
 import type { Location, LocationDetails } from "@/types/location";
-import type { Booking, InvitePreview, TablePage } from "@/types/booking";
+import type {
+  Booking,
+  Cart,
+  InvitePreview,
+  MyPreOrder,
+  SubmittedPart,
+  TablePage,
+} from "@/types/booking";
 
 const nextServer = axios.create({
   baseURL: "/api/v1",
@@ -89,6 +96,19 @@ export const createBooking = async (
   return data;
 };
 
+// Бронювання користувача: власні й ті, до яких приєднався
+export const getBookings = async (): Promise<Booking[]> => {
+  const { data } = await nextServer.get<Booking[]>("/bookings");
+  return data;
+};
+
+export const cancelBooking = async (bookingId: string): Promise<Booking> => {
+  const { data } = await nextServer.post<Booking>(
+    `/bookings/${encodeURIComponent(bookingId)}/cancel`,
+  );
+  return data;
+};
+
 export const getBooking = async (bookingId: string): Promise<Booking> => {
   const { data } = await nextServer.get<Booking>(
     `/bookings/${encodeURIComponent(bookingId)}`,
@@ -101,6 +121,60 @@ export const getInviteCode = async (bookingId: string): Promise<string> => {
     `/bookings/${encodeURIComponent(bookingId)}/invite`,
   );
   return data.code;
+};
+
+// ===== Pre-order cart (на бекенді, окремий для кожного учасника) =====
+
+const bookingPath = (bookingId: string) =>
+  `/bookings/${encodeURIComponent(bookingId)}`;
+
+export const getCart = async (bookingId: string): Promise<Cart> => {
+  const { data } = await nextServer.get<Cart>(`${bookingPath(bookingId)}/cart`);
+  return data;
+};
+
+export interface SetCartItemParams {
+  bookingId: string;
+  dishId: string;
+  quantity: number;
+  note?: string | null;
+}
+
+export const setCartItem = async ({
+  bookingId,
+  dishId,
+  quantity,
+  note = null,
+}: SetCartItemParams): Promise<Cart> => {
+  const { data } = await nextServer.put<Cart>(
+    `${bookingPath(bookingId)}/cart/items/${encodeURIComponent(dishId)}`,
+    { quantity, note },
+  );
+  return data;
+};
+
+export const removeCartItem = async (
+  bookingId: string,
+  dishId: string,
+): Promise<Cart> => {
+  const { data } = await nextServer.delete<Cart>(
+    `${bookingPath(bookingId)}/cart/items/${encodeURIComponent(dishId)}`,
+  );
+  return data;
+};
+
+export const submitCart = async (bookingId: string): Promise<SubmittedPart> => {
+  const { data } = await nextServer.post<SubmittedPart>(
+    `${bookingPath(bookingId)}/cart/submit`,
+  );
+  return data;
+};
+
+export const getMyPreOrder = async (bookingId: string): Promise<MyPreOrder> => {
+  const { data } = await nextServer.get<MyPreOrder>(
+    `${bookingPath(bookingId)}/my-pre-order`,
+  );
+  return data;
 };
 
 // ===== Invites =====

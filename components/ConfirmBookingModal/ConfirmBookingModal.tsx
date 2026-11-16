@@ -18,6 +18,9 @@ type Props = {
   onClose: () => void;
 };
 
+// Компанії понад 4 гостей бронюють запитом — його підтверджує ресторан
+export const INSTANT_BOOKING_LIMIT = 4;
+
 // Підтвердження перед бронюванням: захищає від випадкового кліку по часу
 const ConfirmBookingModal = ({
   table,
@@ -27,6 +30,8 @@ const ConfirmBookingModal = ({
   onConfirm,
   onClose,
 }: Props) => {
+  const isRequest = partySize > INSTANT_BOOKING_LIMIT;
+
   const rows = [
     { label: "Location", value: table.location.address },
     {
@@ -45,9 +50,13 @@ const ConfirmBookingModal = ({
       className={css.modal}
     >
       <h2 id="confirm-booking-title" className={css.title}>
-        Book this table?
+        {isRequest ? "Request this table?" : "Book this table?"}
       </h2>
-      <p className={css.lead}>Please check the details of your reservation.</p>
+      <p className={css.lead}>
+        {isRequest
+          ? "Groups of 5–8 are booked by request: the restaurant will confirm it, and you'll get a notification and an email."
+          : "Please check the details of your reservation."}
+      </p>
 
       <dl className={css.details}>
         {rows.map(({ label, value }) => (
@@ -73,7 +82,13 @@ const ConfirmBookingModal = ({
           onClick={onConfirm}
           disabled={isBooking}
         >
-          {isBooking ? "Booking..." : "Book Table"}
+          {isBooking
+            ? isRequest
+              ? "Sending..."
+              : "Booking..."
+            : isRequest
+              ? "Send Request"
+              : "Book Table"}
         </button>
       </div>
     </Modal>

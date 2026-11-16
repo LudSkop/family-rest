@@ -36,6 +36,16 @@ const formatDate = (date: string) =>
     timeZone: "UTC",
   }).format(new Date(`${date}T00:00:00Z`));
 
+// Зрозумілі тексти для помилок бронювання (розгалуження за code)
+const BOOKING_ERRORS: Record<string, string> = {
+  SLOT_UNAVAILABLE: "This time was just taken. Please choose another one.",
+  OVERLAPPING_BOOKING: "You already have a reservation at this time.",
+  REQUEST_TOO_LATE:
+    "Requests for large groups must be sent further in advance. Please choose a later time or call us.",
+  TABLE_NOT_SUITABLE:
+    "This table doesn't fit your group. Please choose another one.",
+};
+
 const Booking = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -114,7 +124,9 @@ const Booking = () => {
       if (apiError?.code === "SLOT_UNAVAILABLE" && search) mutate(search);
 
       showToast(
-        apiError?.message ?? "Could not book the table. Please try again.",
+        BOOKING_ERRORS[apiError?.code ?? ""] ??
+          apiError?.message ??
+          "Could not book the table. Please try again.",
         "error",
       );
     },
@@ -199,7 +211,7 @@ const Booking = () => {
               <path d="M5 4h3l1.5 4-2 1.3a11 11 0 0 0 5.2 5.2l1.3-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z" />
             </svg>
             <span>
-              For groups larger than 4, please call us directly at{" "}
+              For groups larger than 8, please call us directly at{" "}
               <a href={`tel:${SUPPORT_PHONE.replace(/\s/g, "")}`}>
                 {SUPPORT_PHONE}
               </a>

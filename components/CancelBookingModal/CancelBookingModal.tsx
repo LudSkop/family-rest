@@ -1,6 +1,6 @@
 "use client";
 
-import css from "@/components/ConfirmBookingModal/ConfirmBookingModal.module.css";
+import own from "./CancelBookingModal.module.css";
 import Modal from "@/components/Modal/Modal";
 import { formatBookingDate, formatTimeRange } from "@/lib/utils/bookingTime";
 import type { Booking } from "@/types/booking";
@@ -19,55 +19,43 @@ const CancelBookingModal = ({
   onConfirm,
   onClose,
 }: Props) => {
-  const rows = [
-    { label: "Location", value: booking.location.address },
-    { label: "Table", value: booking.table.label },
-    { label: "Date", value: formatBookingDate(booking.starts_at) },
-    {
-      label: "Time",
-      value: formatTimeRange(booking.starts_at, booking.ends_at),
-    },
-  ];
-
   return (
     <Modal
       onClose={onClose}
       labelledBy="cancel-booking-title"
-      className={css.modal}
+      className={own.modal}
     >
-      <h2 id="cancel-booking-title" className={css.title}>
-        Cancel this reservation?
+      <h2 id="cancel-booking-title" className={own.title}>
+        Cancel Reservation
       </h2>
-      <p className={css.lead}>
-        The table will be released, and your guests&apos; invite link will stop
-        working.
+      <p className={own.text}>
+        Cancelling this reservation will remove all pre-orders.
+        <br />
+        You won&apos;t be able to undo this action.
+      </p>
+      <p className="visually-hidden">
+        {booking.location.address}, {booking.table.label},{" "}
+        {formatBookingDate(booking.starts_at)},{" "}
+        {formatTimeRange(booking.starts_at, booking.ends_at)}
       </p>
 
-      <dl className={css.details}>
-        {rows.map(({ label, value }) => (
-          <div key={label} className={css.row}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
-
-      <div className={css.actions}>
+      {/* «Keep it» — текстова кнопка, «Cancel» — червона обводка (Figma) */}
+      <div className={own.actions}>
         <button
           type="button"
-          className={css.cancel}
+          className={own.keep}
           onClick={onClose}
           disabled={isCancelling}
         >
-          Keep It
+          Keep it
         </button>
         <button
           type="button"
-          className={css.confirm}
+          className={own.cancel}
           onClick={onConfirm}
           disabled={isCancelling}
         >
-          {isCancelling ? "Cancelling..." : "Cancel Reservation"}
+          {isCancelling ? "Cancelling..." : "Cancel"}
         </button>
       </div>
     </Modal>

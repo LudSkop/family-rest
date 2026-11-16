@@ -1,13 +1,16 @@
 "use client";
 
 import css from "./ReservationCard.module.css";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/Toast/ToastProvider";
+import { useQuery } from "@tanstack/react-query";
+import InviteLinkModal from "@/components/InviteLinkModal/InviteLinkModal";
+import GroupPreOrderModal from "@/components/GroupPreOrderModal/GroupPreOrderModal";
 import {
   toPreOrderSession,
   usePreOrder,
 } from "@/components/PreOrder/PreOrderProvider";
-import { getInviteCode } from "@/lib/api/clientApi";
+import { getMyPreOrder } from "@/lib/api/clientApi";
 import { formatBookingDate, formatTimeRange } from "@/lib/utils/bookingTime";
 import {
   STATUS_LABELS,
@@ -39,8 +42,8 @@ const ICONS = {
 // Картка бронювання (Figma «Reservations»): статус зверху, адреса, дата, час, гості
 const ReservationCard = ({ booking, status, onCancel }: Props) => {
   const router = useRouter();
-  const { showToast } = useToast();
   const { startPreOrder } = usePreOrder();
+  const [openModal, setOpenModal] = useState<"invite" | "group" | null>(null);
 
   const isOwner = booking.role === "OWNER";
   const isUpcoming = status === "RESERVED";
@@ -48,17 +51,18 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
   const isPending = status === "PENDING";
   const canManage = isOwner && (isUpcoming || isPending);
 
-  const copyInvite = async () => {
-    try {
-      const code = await getInviteCode(booking.id);
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/join/${code}`,
-      );
-      showToast("Share it with your friends.", "success", "Link copied!");
-    } catch {
-      showToast("Could not copy the invite link. Please try again.", "error");
-    }
-  };
+  // «1 Guest = Owner»: запрошувати нікого — блоку «Invite Guests» немає (Figma)
+  const canInvite = isOwner && isUpcoming && booking.party_size > 1;
+
+  // Чи вже відправляв цей учасник своє передзамовлення:
+  // ні — «Add Pre-Order», так — «Group Pre-Order» (Figma)
+  const { data: myPreOrder } = useQuery({
+    queryKey: ["bookings", booking.id, "my-pre-order"],
+    queryFn: () => getMyPreOrder(booking.id),
+    enabled: isUpcoming,
+    retry: false,
+  });
+  const hasSubmitted = Boolean(myPreOrder?.parts.length);
 
   const addPreOrder = () => {
     startPreOrder(toPreOrderSession(booking));
@@ -89,7 +93,8 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
           )}
         </div>
 
-        {canManage && (
+        {/* Код запрошення бекенд дає лише для підтвердженого бронювання */}
+        {canInvite && (
           <div className={css.invite}>
             <p>
               Share link with your guests so they can place their pre-orders
@@ -97,7 +102,7 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
             <button
               type="button"
               className={css.outlineBtn}
-              onClick={copyInvite}
+              onClick={() => setOpenModal("invite")}
             >
               Invite Guests
             </button>
@@ -133,8 +138,8 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
           </div>
         </dl>
 
-        {/* TODO: «Pre-orders: 4/4», «Group Pre-Order», «Leave Feedback» —
-            чекають API передзамовлення й відгуків на бекенді */}
+        {/* TODO: «Pre-orders: 4/4» і замовлення гостей у Group Pre-Order —
+            чекають API бекенда */}
         {isPending && (
           <p className={css.pendingNote}>
             The restaurant will confirm your request soon. Pre-ordering opens
@@ -144,16 +149,39 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
 
         {isUpcoming && (
           <div className={css.actions}>
-            <button
-              type="button"
-              className={css.primaryBtn}
-              onClick={addPreOrder}
-            >
-              Add Pre-Order
-            </button>
+            {hasSubmitted ? (
+              <button
+                type="button"
+                className={css.outlineBtn}
+                onClick={() => setOpenModal("group")}
+              >
+                Group Pre-Order
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={css.primaryBtn}
+                onClick={addPreOrder}
+              >
+                Add Pre-Order
+              </button>
+            )}
           </div>
         )}
       </div>
+
+      {openModal === "invite" && (
+        <InviteLinkModal booking={booking} onClose={() => setOpenModal(null)} />
+      )}
+
+      {openModal === "group" && myPreOrder && (
+        <GroupPreOrderModal
+          booking={booking}
+          preOrder={myPreOrder}
+          onAddMore={addPreOrder}
+          onClose={() => setOpenModal(null)}
+        />
+      )}
     </article>
   );
 };

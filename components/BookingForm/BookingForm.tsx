@@ -40,8 +40,9 @@ const TIME_SLOTS = Array.from({ length: 24 }, (_, index) => {
 // «Show All» — шукаємо без часу: усі столи з вільним часом на цей день
 export const ALL_TIMES = "all";
 
-// Столи на 2 і 4 особи; більші компанії — лише телефоном
-const MAX_GUESTS = 4;
+// До 4 гостей — бронювання одразу; 5–8 — запит, який підтверджує ресторан;
+// більші компанії — лише телефоном
+const MAX_GUESTS = 8;
 
 const getRestaurantNow = () => {
   const parts = new Intl.DateTimeFormat("en-CA", {

@@ -83,7 +83,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               <p className={css.title}>
                 {title ?? (variant === "success" ? "Success" : "Error")}
               </p>
-              <p>{message}</p>
+              {message && <p>{message}</p>}
             </div>
             <button
               type="button"

@@ -65,7 +65,7 @@ const Reservations = () => {
   const cancel = useMutation({
     mutationFn: cancelBooking,
     onSuccess: () => {
-      showToast("Your reservation was cancelled.");
+      showToast("", "success", "Reservation Cancelled!");
     },
     onError: (error) => {
       const code = getApiError(error)?.code ?? "";

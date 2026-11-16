@@ -83,8 +83,14 @@
 - [x] Не оновлюємо для login / register / refresh / logout / verify-email / password-reset
 - [x] Перед приєднанням за запрошенням залогінений спершу оновлює сесію (інакше бекенд приєднає його як гостя)
 
+## Бронювання до 8 гостей ✅ (2026-11-16)
+- [x] Форма: 1–8 гостей; «For groups larger than 8, please call us…»
+- [x] 5–8 гостей: вікно «Request this table?» + «Send Request»; після — «Request Sent» без запрошення й передзамовлення
+- [x] Помилки бронювання: `REQUEST_TOO_LATE`, `OVERLAPPING_BOOKING`, `SLOT_UNAVAILABLE`, `TABLE_NOT_SUITABLE`
+- [x] Картка запиту (PENDING) на Reservations: без «Invite Guests» (код запрошення лише для підтвердженого)
+
 ## Нове на бекенді (2026-11-16), ще не зроблено
-- Компанії 5–8 гостей: бронювання-запит `PENDING` (столи на 6 і 8). Форма Book a Table зараз до 4 гостей і «call us for >4» — оновити до 8
+- Макет «Automatic pre-order hard lock (T-45)»: банер на Reservations і в Group Pre-Order «You have unconfirmed items in your pre-order. They will be canceled in 15 minutes.» — потрібні статуси страв від бекенда
 - Сповіщення `GET /notifications` (BOOKING_REQUEST_APPROVED / REJECTED) — можливо, це помаранчева крапка на картці
 - Немає API для Group Pre-Order власника (замовлення гостей, статуси Sent/Confirmed/Rejected, Remove Guest, «Pre-orders N/M»)
 
@@ -95,3 +101,20 @@
 - Мітки страв «Vegetarian», «Lactose free» у модалці — бекенд не віддає (у `DishResponse` немає таких полів)
 - Страви без фото в Group Pre-Order (кружечок з літерою «G», «F») — це страви з меню без `image_url`?
 - Мобільні макети цих екранів
+
+## Waiter View (роль офіціанта) — макети отримано 2026-11-16, ⏳ чекає бекенда
+Макети: «Reservations. Waiter view. No pre-order / Pre-order created», «Cancel Reservation modal», «Reservation Pre-Order modal states».
+- Хедер офіціанта: Reservations + Menu + 🔔 + профіль; «Hello, <name> (Waiter)»
+- Фільтри: дата, час, стіл, 🔍, «+ New Reservation»
+- Картки всіх гостей: ім'я власника, вибір столу, 🗑 / ✏️, кнопки Create / Edit / View Order, Submit / View Pre-order
+- Модалка «Reservation Pre-Order»: Owner / Guest блоки, ✓ / ✕ на кожній страві, статуси Created by Customer → Updated → Confirmed by Restaurant, Submit власнику, режим перегляду
+- На бекенді є лише: `GET /staff/booking-requests`, `POST …/approve`, `POST …/reject` (запити 5–8 гостей). Немає: ролі в `/auth/me`, списку всіх бронювань, призначення столу, дашборду передзамовлення, ✓/✕ страв
+
+## Reservations за новими макетами власника ✅ (2026-11-16)
+- [x] «Invite Guests» → модалка «Guest Invite link» (локація, дата, час, гості, посилання + копіювання → toast «Link copied!»)
+- [x] «Invite Guests» лише коли гостей > 1 («1 Guest = Owner»)
+- [x] «Cancel Reservation»: тексти з Figma, «Keep it» (текстова) + «Cancel» (червона обводка), toast «Reservation Cancelled!»
+- [x] «Add Pre-Order» → «Group Pre-Order», щойно учасник відправив своє передзамовлення (`GET /my-pre-order`)
+- [x] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): лише блок «My Pre-Order» — однакові страви з різних відправлень разом; «Add more dishes» → меню
+- [ ] ⏳ Блоки гостей, «Remove Guest», статуси Confirmed / Rejected, «Pre-orders N/M» — чекають API бекенда
+- [ ] Вкладки з підкресленням і окремою «In Progress» — макет позначений Backlog

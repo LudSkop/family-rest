@@ -28,9 +28,14 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
   const { showToast } = useToast();
   const { startPreOrder } = usePreOrder();
 
+  // Запит великої компанії (PENDING): ресторан ще не підтвердив —
+  // посилання-запрошення й передзамовлення відкриються після підтвердження
+  const isPending = booking.status === "PENDING";
+
   const { data: code, isError } = useQuery({
     queryKey: ["bookings", booking.id, "invite"],
     queryFn: () => getInviteCode(booking.id),
+    enabled: !isPending,
     retry: false,
   });
 
@@ -61,8 +66,16 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
   return (
     <Modal onClose={onClose} labelledBy="confirmed-title" className={css.modal}>
       <h2 id="confirmed-title" className={css.title}>
-        Reservation Confirmed
+        {isPending ? "Request Sent" : "Reservation Confirmed"}
       </h2>
+
+      {isPending && (
+        <p className={css.lead}>
+          The restaurant will review your request soon. You&apos;ll get a
+          notification and an email once it&apos;s confirmed — then you can
+          invite guests and pre-order.
+        </p>
+      )}
 
       <dl className={css.details}>
         {rows.map(({ label, value }) => (
@@ -73,48 +86,58 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
         ))}
       </dl>
 
-      <div className={css.invite}>
-        <p className={css.inviteLabel} id="invite-label">
-          Invite Link
-        </p>
-        <div className={css.linkBox}>
-          <input
-            className={css.linkInput}
-            value={isError ? "Could not create the link" : inviteLink || "..."}
-            readOnly
-            aria-labelledby="invite-label"
-            onFocus={(event) => event.target.select()}
-          />
-          <button
-            type="button"
-            className={css.copyBtn}
-            onClick={copyLink}
-            disabled={!inviteLink}
-            aria-label="Copy invite link"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="9" y="9" width="11" height="11" rx="2" />
-              <path d="M5 15V6a2 2 0 0 1 2-2h9" />
-            </svg>
-          </button>
+      {!isPending && (
+        <div className={css.invite}>
+          <p className={css.inviteLabel} id="invite-label">
+            Invite Link
+          </p>
+          <div className={css.linkBox}>
+            <input
+              className={css.linkInput}
+              value={
+                isError ? "Could not create the link" : inviteLink || "..."
+              }
+              readOnly
+              aria-labelledby="invite-label"
+              onFocus={(event) => event.target.select()}
+            />
+            <button
+              type="button"
+              className={css.copyBtn}
+              onClick={copyLink}
+              disabled={!inviteLink}
+              aria-label="Copy invite link"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="9" width="11" height="11" rx="2" />
+                <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+              </svg>
+            </button>
+          </div>
+          <p className={css.hint}>
+            You are able to share this link for pre-order with your group.
+          </p>
         </div>
-        <p className={css.hint}>
-          You are able to share this link for pre-order with your group.
-        </p>
-      </div>
+      )}
 
-      <div className={css.actions}>
+      {isPending ? (
         <ButtonLink href="/reservations" variant="secondary">
           View Reservation
         </ButtonLink>
-        <ButtonLink
-          href="/menu"
-          // Власник починає передзамовлення для щойно створеного бронювання
-          onClick={() => startPreOrder(toPreOrderSession(booking))}
-        >
-          Make Pre-Order
-        </ButtonLink>
-      </div>
+      ) : (
+        <div className={css.actions}>
+          <ButtonLink href="/reservations" variant="secondary">
+            View Reservation
+          </ButtonLink>
+          <ButtonLink
+            href="/menu"
+            // Власник починає передзамовлення для щойно створеного бронювання
+            onClick={() => startPreOrder(toPreOrderSession(booking))}
+          >
+            Make Pre-Order
+          </ButtonLink>
+        </div>
+      )}
     </Modal>
   );
 };

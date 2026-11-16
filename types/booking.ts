@@ -111,3 +111,26 @@ export interface MyPreOrder {
   parts: SubmittedPart[];
   total_cents: number;
 }
+
+// ===== Персонал: запити великих компаній (GET /staff/booking-requests) =====
+
+export interface BookingRequest {
+  id: string;
+  status: BookingStatus;
+  owner_first_name: string;
+  party_size: number;
+  starts_at: string;
+  ends_at: string;
+  created_at: string;
+  table: { id: string; label: string; capacity: number };
+  location: BookingLocation;
+  // Скільки інших запитів претендують на той самий стіл і час
+  competing_requests: number;
+}
+
+export interface BookingRequestPage {
+  items: BookingRequest[];
+  total: number;
+  limit: number;
+  offset: number;
+}

@@ -62,20 +62,24 @@
 - [x] «Invite Guests» + текст «Share link with your guests…» — копіювати посилання-запрошення (toast «Link copied!»)
 - [x] «Add Pre-Order» → меню в режимі передзамовлення для цього бронювання
 - [x] Вкладки-фільтри «All (N)» / «Upcoming» / …
-- [ ] ⏳ «Pre-orders: 4/4», «Group Pre-Order» — чекають API передзамовлення
+- [x] «Group Pre-Order» замість «Add Pre-Order» після відправки
+- [ ] ⏳ «Pre-orders: 4/4» — чекає API
 - ~~«Leave Feedback» / «Update Feedback»~~ — відгуків у проєкті не буде (рішення 2026-11-16)
 
-## Крок 9. Передзамовлення власника ⏳ чекає API бекенда
-- [ ] Хедер власника: меню + Reservations + кошик з лічильником + профіль; та сама зелена смуга
-- [ ] Кошик: підзаголовок «My Pre-Order»; Submit сірий, поки немає змін; після змін — «Cancel Changes» + «Submit Pre-Order»
-- [ ] Модалка «Pre-Order Submitted»: «Your Pre-Order was sent successfully. Wait for the confirmation from the restaurant.» + «View Reservations»
-- [ ] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): «My Pre-Order» + «Edit my Pre-Order», замовлення гостей, Subtotal, Grand Total
-- [ ] Коментар до страви («No onions please», «Extra avocado»)
+## Крок 9. Передзамовлення власника — частково ✅ (решта чекає API бекенда)
+- [x] Хедер власника: меню + Reservations + кошик з лічильником + профіль; та сама зелена смуга
+- [x] Кошик: підзаголовок «My Pre-Order»
+- [ ] «Cancel Changes» поруч із Submit (скасувати незбережену чернетку) — не зроблено
+- [x] Модалка «Pre-Order Submitted»: «Your Pre-Order was sent successfully. Wait for the confirmation from the restaurant.» + «View Reservations»
+- [x] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): «My Pre-Order», Subtotal, Grand Total
+- [ ] ⏳ Замовлення гостей у Group Pre-Order — чекає API
+- [x] Коментар до страви показується в кошику й Group Pre-Order
+- [ ] Поле для введення коментаря — у макетах гостя немає, не зроблено
 
-## Крок 10. Фінальна перевірка
-- [ ] Мобільна і планшетна версії
+## Крок 10. Фінальна перевірка — майже ✅
+- [x] Мобільна і планшетна версії — 13 сторінок / модалок × 375, 768, 1440: без горизонтального скролу і помилок у консолі (2026-11-16)
 - [ ] Оновлення сторінки, повторне відкриття посилання, запрошення закрилось під час замовлення
-- [ ] Продакшн-збірка, перевірка `/join/...` на Vercel
+- [x] Продакшн-збірка, перевірка `/join/...` на Vercel
 
 ## Оновлення сесії ✅ (2026-11-16)
 - [x] 401 → один `POST /auth/refresh` → повтор запиту (`lib/api/clientApi.ts`, інтерцептор axios)
@@ -118,3 +122,13 @@
 - [x] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): лише блок «My Pre-Order» — однакові страви з різних відправлень разом; «Add more dishes» → меню
 - [ ] ⏳ Блоки гостей, «Remove Guest», статуси Confirmed / Rejected, «Pre-orders N/M» — чекають API бекенда
 - [ ] Вкладки з підкресленням і окремою «In Progress» — макет позначений Backlog
+
+## Сторінка персоналу «Booking Requests» ✅ (2026-11-16)
+Бекенд: `GET /staff/booking-requests`, `POST …/{id}/approve`, `POST …/{id}/reject` (лише персонал, інакше 403 STAFF_ONLY)
+- [x] `/staff/requests`: картки запитів 5–8 гостей (ім'я, гості, дата, час, стіл, локація, коли створено), пагінація по 20
+- [x] Попередження «N other requests want this table at this time» (`competing_requests`)
+- [x] Approve одразу; Reject — через вікно підтвердження; після рішення список оновлюється (конкуренти зникають)
+- [x] Помилки: `SLOT_UNAVAILABLE`, `REQUEST_EXPIRED`, `REQUEST_NOT_PENDING`
+- [x] Пункт «Requests» у хедері — лише для персоналу (ролі в `/auth/me` немає, тож перевіряємо доступ до списку)
+- [x] Звичайний користувач — «available to restaurant staff only»; гість — «Sign in with a staff account»
+- Макета немає — зроблено в стилі карток Reservations

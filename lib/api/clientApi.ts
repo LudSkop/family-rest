@@ -14,6 +14,8 @@ import type {
 import type { Location, LocationDetails } from "@/types/location";
 import type {
   Booking,
+  BookingRequest,
+  BookingRequestPage,
   Cart,
   InvitePreview,
   MyPreOrder,
@@ -246,6 +248,37 @@ export const joinInvite = async (
   const { data } = await nextServer.post<Booking>(
     `/invites/${encodeURIComponent(code)}/join`,
     name ? { name } : {},
+  );
+  return data;
+};
+
+// ===== Staff: запити великих компаній =====
+
+export const getBookingRequests = async (
+  offset = 0,
+  limit = 20,
+): Promise<BookingRequestPage> => {
+  const { data } = await nextServer.get<BookingRequestPage>(
+    "/staff/booking-requests",
+    { params: { limit, offset } },
+  );
+  return data;
+};
+
+export const approveBookingRequest = async (
+  id: string,
+): Promise<BookingRequest> => {
+  const { data } = await nextServer.post<BookingRequest>(
+    `/staff/booking-requests/${encodeURIComponent(id)}/approve`,
+  );
+  return data;
+};
+
+export const rejectBookingRequest = async (
+  id: string,
+): Promise<BookingRequest> => {
+  const { data } = await nextServer.post<BookingRequest>(
+    `/staff/booking-requests/${encodeURIComponent(id)}/reject`,
   );
   return data;
 };

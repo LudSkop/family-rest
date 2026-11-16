@@ -11,6 +11,7 @@ import UserMenu from "@/components/UserMenu/UserMenu";
 import CartDrawer from "@/components/CartDrawer/CartDrawer";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useIsStaff } from "@/hooks/useIsStaff";
 import { usePreOrder } from "@/components/PreOrder/PreOrderProvider";
 import { useCart } from "@/components/PreOrder/CartProvider";
 import { logout } from "@/lib/api/clientApi";
@@ -22,6 +23,9 @@ const NAV_LINKS = [
 
 // Додатковий пункт лише для користувача, що увійшов (як у Figma)
 const USER_NAV_LINKS = [{ href: "/reservations", label: "Reservations" }];
+
+// Лише для персоналу: підтвердження запитів великих компаній
+const STAFF_NAV_LINKS = [{ href: "/staff/requests", label: "Requests" }];
 
 // Сторінки, з яких після виходу повертаємо на головну
 const PRIVATE_PATHS = ["/reservations"];
@@ -75,7 +79,10 @@ const Header = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isMenuOpen]);
 
-  const links = user ? [...NAV_LINKS, ...USER_NAV_LINKS] : NAV_LINKS;
+  const isStaff = useIsStaff();
+  const links = user
+    ? [...NAV_LINKS, ...USER_NAV_LINKS, ...(isStaff ? STAFF_NAV_LINKS : [])]
+    : NAV_LINKS;
 
   const navLinks = links.map(({ href, label }) => (
     <li key={href}>

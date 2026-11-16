@@ -1,0 +1,209 @@
+.page {
+  min-height: calc(100vh - 68px);
+  padding-block: 32px 56px;
+  background-color: var(--bg-yellow);
+}
+
+.status {
+  padding-block: 24px;
+  color: var(--text-muted);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.count {
+  padding: 2px 12px;
+  border-radius: 12px;
+  background-color: #ececec;
+  font-size: 13px;
+  line-height: 22px;
+  color: var(--text);
+}
+
+.lead {
+  max-width: 640px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.empty {
+  padding: 40px 16px;
+  border-radius: 16px;
+  background-color: var(--white);
+  font-size: 16px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* 1 / 2 / 3 картки в ряд, як на Reservations */
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 16px;
+  border-top: 4px solid #d6d6d6;
+  border-radius: 16px;
+  background-color: var(--white);
+  box-shadow: 0 4px 16px rgba(35, 35, 35, 0.04);
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.owner {
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.party {
+  padding: 2px 10px;
+  border-radius: 10px;
+  background-color: var(--success-bg);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--accent-dark);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  padding-block: 12px;
+  border-block: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.details dt {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.details dd {
+  color: var(--text);
+}
+
+/* Попередження: на стіл претендують інші запити */
+.competing {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #fbefc8;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.created {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.approve,
+.reject {
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.approve {
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  color: var(--white);
+}
+
+.approve:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.reject {
+  border: 1.4px solid var(--error);
+  background-color: var(--white);
+  color: var(--error);
+}
+
+.reject:hover:not(:disabled) {
+  background-color: var(--error);
+  color: var(--white);
+}
+
+.approve:disabled,
+.reject:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.pagination {
+  margin-top: 24px;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-block: 48px 64px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

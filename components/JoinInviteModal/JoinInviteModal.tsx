@@ -40,6 +40,8 @@ const JoinInviteModal = ({ code }: Props) => {
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  // Приєднався до запиту, який ресторан ще не підтвердив
+  const [joinedPending, setJoinedPending] = useState(false);
 
   const invite = useQuery({
     queryKey: ["invites", code],
@@ -55,6 +57,11 @@ const JoinInviteModal = ({ code }: Props) => {
       return joinInvite(code, guestName);
     },
     onSuccess: (booking) => {
+      // До підтвердження запиту передзамовлення закрите — режим не вмикаємо
+      if (booking.status === "PENDING") {
+        setJoinedPending(true);
+        return;
+      }
       // Гість у режимі передзамовлення для цього бронювання → меню
       startPreOrder(toPreOrderSession(booking));
       router.replace("/menu");
@@ -154,8 +161,32 @@ const JoinInviteModal = ({ code }: Props) => {
   }
 
   // ===== «You're Invited!» =====
-  const { owner_first_name, starts_at, ends_at, party_size, location } =
+  const { owner_first_name, status, starts_at, ends_at, party_size, location } =
     invite.data;
+  const isPendingRequest = status === "PENDING";
+
+  // ===== Приєднався до запиту, який ще чекає підтвердження =====
+  if (joinedPending) {
+    return (
+      <Modal
+        onClose={closeToHome}
+        labelledBy="invite-title"
+        className={css.modal}
+      >
+        <h2 id="invite-title" className={css.title}>
+          You&apos;ve joined!
+        </h2>
+        <p className={css.lead}>
+          You&apos;re now part of {owner_first_name}&apos;s reservation. The
+          restaurant hasn&apos;t confirmed it yet — pre-ordering opens once it
+          does. Open this invitation link again later to choose your dishes.
+        </p>
+        <ButtonLink href="/menu" variant="secondary">
+          Browse Menu
+        </ButtonLink>
+      </Modal>
+    );
+  }
 
   const rows = [
     { label: "Restaurant", value: "Family Rest" },
@@ -177,6 +208,15 @@ const JoinInviteModal = ({ code }: Props) => {
       <p className={css.lead}>
         {owner_first_name} invited you to pre-order for an upcoming reservation.
       </p>
+
+      {/* Перегляд показує, чи ресторан уже підтвердив бронювання */}
+      {isPendingRequest && (
+        <p className={css.pending}>
+          This large-group reservation is awaiting the restaurant&apos;s
+          confirmation. You can join now — pre-ordering opens after it&apos;s
+          confirmed.
+        </p>
+      )}
 
       <dl className={css.details}>
         {rows.map(({ label, value }) => (
@@ -215,7 +255,11 @@ const JoinInviteModal = ({ code }: Props) => {
           className={`${authCss.submit} ${authCss.submitActive}`}
           disabled={join.isPending || isUserLoading}
         >
-          {join.isPending ? "Joining..." : "Browse Menu"}
+          {join.isPending
+            ? "Joining..."
+            : isPendingRequest
+              ? "Join Reservation"
+              : "Browse Menu"}
         </button>
       </form>
     </Modal>

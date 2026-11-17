@@ -24,6 +24,17 @@
   color: var(--text);
 }
 
+/* Запит ще не підтверджений рестораном */
+.pending {
+  margin: -12px 0 20px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: #fbefc8;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
 /* Restaurant / Location / Date / Time / Guests */
 .details {
   display: flex;

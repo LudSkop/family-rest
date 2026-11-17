@@ -54,6 +54,8 @@ export interface Booking {
 // GET /invites/{code} — хто запрошує і на яке бронювання (вхід не потрібен)
 export interface InvitePreview {
   owner_first_name: string;
+  // CONFIRMED — бронювання; PENDING — запит великої компанії, ще не підтверджений
+  status: BookingStatus;
   starts_at: string;
   ends_at: string;
   party_size: number;

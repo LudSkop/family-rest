@@ -138,6 +138,24 @@
   color: var(--text-muted);
 }
 
+/* «Joined: 2 of 4» + імена */
+.joined {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.joined span:first-child {
+  font-weight: 500;
+}
+
+.joinedNames {
+  color: var(--text-muted);
+}
+
 .pendingNote {
   margin-top: auto;
   font-size: 12px;

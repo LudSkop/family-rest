@@ -28,14 +28,13 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
   const { showToast } = useToast();
   const { startPreOrder } = usePreOrder();
 
-  // Запит великої компанії (PENDING): ресторан ще не підтвердив —
-  // посилання-запрошення й передзамовлення відкриються після підтвердження
+  // Запит великої компанії (PENDING): ресторан ще не підтвердив.
+  // Запросити друзів уже можна, передзамовлення — лише після підтвердження
   const isPending = booking.status === "PENDING";
 
   const { data: code, isError } = useQuery({
     queryKey: ["bookings", booking.id, "invite"],
     queryFn: () => getInviteCode(booking.id),
-    enabled: !isPending,
     retry: false,
   });
 
@@ -72,8 +71,8 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
       {isPending && (
         <p className={css.lead}>
           The restaurant will review your request soon. You&apos;ll get a
-          notification and an email once it&apos;s confirmed — then you can
-          invite guests and pre-order.
+          notification and an email once it&apos;s confirmed — then everyone can
+          pre-order. You can already invite your guests.
         </p>
       )}
 
@@ -86,7 +85,7 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
         ))}
       </dl>
 
-      {!isPending && (
+      {booking.party_size > 1 && (
         <div className={css.invite}>
           <p className={css.inviteLabel} id="invite-label">
             Invite Link

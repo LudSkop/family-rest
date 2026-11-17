@@ -51,8 +51,15 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
   const isPending = status === "PENDING";
   const canManage = isOwner && (isUpcoming || isPending);
 
-  // «1 Guest = Owner»: запрошувати нікого — блоку «Invite Guests» немає (Figma)
-  const canInvite = isOwner && isUpcoming && booking.party_size > 1;
+  // «1 Guest = Owner»: запрошувати нікого — блоку «Invite Guests» немає (Figma).
+  // Запросити можна і до підтвердження запиту великої компанії
+  const canInvite = canManage && booking.party_size > 1;
+
+  // Приєднані учасники (разом із власником) зараховуються до розміру компанії
+  const joinedCount = booking.participants.length;
+  const otherParticipants = booking.participants.filter(
+    (participant) => participant.id !== booking.participant_id,
+  );
 
   // Чи вже відправляв цей учасник своє передзамовлення:
   // ні — «Add Pre-Order», так — «Group Pre-Order» (Figma)
@@ -93,7 +100,6 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
           )}
         </div>
 
-        {/* Код запрошення бекенд дає лише для підтвердженого бронювання */}
         {canInvite && (
           <div className={css.invite}>
             <p>
@@ -137,6 +143,26 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
             <dd className={css.table}>{booking.table.label}</dd>
           </div>
         </dl>
+
+        {/* Хто вже приєднався за запрошенням: «Joined: 2 of 4» */}
+        {(isUpcoming || isPending) && booking.party_size > 1 && (
+          <p className={css.joined}>
+            <span>
+              Joined: {joinedCount} of {booking.party_size}
+            </span>
+            {otherParticipants.length > 0 && (
+              <span className={css.joinedNames}>
+                {otherParticipants
+                  .map((participant) =>
+                    participant.role === "OWNER"
+                      ? `${participant.name} (host)`
+                      : participant.name,
+                  )
+                  .join(", ")}
+              </span>
+            )}
+          </p>
+        )}
 
         {/* TODO: «Pre-orders: 4/4» і замовлення гостей у Group Pre-Order —
             чекають API бекенда */}

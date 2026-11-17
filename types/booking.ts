@@ -114,6 +114,23 @@ export interface MyPreOrder {
   total_cents: number;
 }
 
+// ===== Передзамовлення всієї компанії (GET /bookings/{id}/group-pre-order) =====
+// Бачить лише власник; спершу власник, далі гості в порядку приєднання.
+// Чернеток тут немає: хто нічого не відправив — parts порожній
+
+export interface ParticipantPreOrder {
+  id: string;
+  name: string;
+  role: ParticipantRole;
+  parts: SubmittedPart[];
+  total_cents: number;
+}
+
+export interface GroupPreOrder {
+  participants: ParticipantPreOrder[];
+  total_cents: number;
+}
+
 // ===== Персонал: запити великих компаній (GET /staff/booking-requests) =====
 
 export interface BookingRequest {

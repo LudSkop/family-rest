@@ -18,6 +18,7 @@ import type {
   BookingRequestPage,
   Cart,
   InvitePreview,
+  GroupPreOrder,
   MyPreOrder,
   SubmittedPart,
   TablePage,
@@ -227,6 +228,16 @@ export const submitCart = async (bookingId: string): Promise<SubmittedPart> => {
 export const getMyPreOrder = async (bookingId: string): Promise<MyPreOrder> => {
   const { data } = await nextServer.get<MyPreOrder>(
     `${bookingPath(bookingId)}/my-pre-order`,
+  );
+  return data;
+};
+
+// Передзамовлення всієї компанії — відповідає лише власнику
+export const getGroupPreOrder = async (
+  bookingId: string,
+): Promise<GroupPreOrder> => {
+  const { data } = await nextServer.get<GroupPreOrder>(
+    `${bookingPath(bookingId)}/group-pre-order`,
   );
   return data;
 };

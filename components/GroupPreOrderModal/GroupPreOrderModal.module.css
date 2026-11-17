@@ -45,16 +45,49 @@
   color: var(--text-muted);
 }
 
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .block {
   padding: 16px;
+  border: 1px solid var(--border);
   border-radius: 12px;
   background-color: var(--white);
+}
+
+/* «Guest» / «Host» поруч з іменем */
+.role {
+  margin-left: 8px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background-color: #dfe7f8;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+
+.empty {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.notJoined {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
 .blockHead {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-bottom: 12px;
 }
 

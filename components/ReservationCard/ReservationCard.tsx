@@ -10,13 +10,13 @@ import {
   toPreOrderSession,
   usePreOrder,
 } from "@/components/PreOrder/PreOrderProvider";
-import { getMyPreOrder } from "@/lib/api/clientApi";
+import { getGroupPreOrder, getMyPreOrder } from "@/lib/api/clientApi";
 import { formatBookingDate, formatTimeRange } from "@/lib/utils/bookingTime";
 import {
   STATUS_LABELS,
   type ReservationStatus,
 } from "@/lib/utils/bookingStatus";
-import type { Booking } from "@/types/booking";
+import type { Booking, ParticipantPreOrder } from "@/types/booking";
 
 type Props = {
   booking: Booking;
@@ -61,15 +61,61 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
     (participant) => participant.id !== booking.participant_id,
   );
 
-  // Чи вже відправляв цей учасник своє передзамовлення:
-  // ні — «Add Pre-Order», так — «Group Pre-Order» (Figma)
+  // Передзамовлення відкрите лише до початку; переглядати відправлене
+  // власник може й під час візиту та після нього
+  const isStartedOrDone = status === "IN_PROGRESS" || status === "COMPLETED";
+
+  // Власник бачить, що відправила вся компанія
+  const { data: group } = useQuery({
+    queryKey: ["bookings", booking.id, "group-pre-order"],
+    queryFn: () => getGroupPreOrder(booking.id),
+    enabled: isOwner && (isUpcoming || isStartedOrDone),
+    retry: false,
+  });
+
+  // Гість бачить лише своє
   const { data: myPreOrder } = useQuery({
     queryKey: ["bookings", booking.id, "my-pre-order"],
     queryFn: () => getMyPreOrder(booking.id),
-    enabled: isUpcoming,
+    enabled: !isOwner && isUpcoming,
     retry: false,
   });
-  const hasSubmitted = Boolean(myPreOrder?.parts.length);
+
+  // Дані для модалки «Group Pre-Order» в одному вигляді для обох ролей
+  const me = booking.participants.find(
+    (participant) => participant.id === booking.participant_id,
+  );
+  const preOrders: {
+    participants: ParticipantPreOrder[];
+    total: number;
+  } | null = isOwner
+    ? group
+      ? { participants: group.participants, total: group.total_cents }
+      : null
+    : myPreOrder
+      ? {
+          participants: [
+            {
+              id: booking.participant_id,
+              name: me?.name ?? "",
+              role: booking.role,
+              parts: myPreOrder.parts,
+              total_cents: myPreOrder.total_cents,
+            },
+          ],
+          total: myPreOrder.total_cents,
+        }
+      : null;
+
+  // Хоч щось відправлено: «Group Pre-Order» замість «Add Pre-Order» (Figma)
+  const hasSubmitted = Boolean(
+    preOrders?.participants.some((participant) => participant.parts.length),
+  );
+
+  // «Pre-orders: 2 of 3» — скільки з приєднаних уже відправили замовлення
+  const submittedCount =
+    group?.participants.filter((participant) => participant.parts.length)
+      .length ?? 0;
 
   const addPreOrder = () => {
     startPreOrder(toPreOrderSession(booking));
@@ -164,8 +210,14 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
           </p>
         )}
 
-        {/* TODO: «Pre-orders: 4/4» і замовлення гостей у Group Pre-Order —
-            чекають API бекенда */}
+        {group && booking.party_size > 1 && (
+          <p className={css.joined}>
+            <span>
+              Pre-orders: {submittedCount} of {group.participants.length}
+            </span>
+          </p>
+        )}
+
         {isPending && (
           <p className={css.pendingNote}>
             The restaurant will confirm your request soon. Pre-ordering opens
@@ -173,7 +225,7 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
           </p>
         )}
 
-        {isUpcoming && (
+        {(isUpcoming || (isStartedOrDone && hasSubmitted)) && (
           <div className={css.actions}>
             {hasSubmitted ? (
               <button
@@ -200,11 +252,12 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
         <InviteLinkModal booking={booking} onClose={() => setOpenModal(null)} />
       )}
 
-      {openModal === "group" && myPreOrder && (
+      {openModal === "group" && preOrders && (
         <GroupPreOrderModal
           booking={booking}
-          preOrder={myPreOrder}
-          onAddMore={addPreOrder}
+          participants={preOrders.participants}
+          totalCents={preOrders.total}
+          onAddMore={isUpcoming ? addPreOrder : undefined}
           onClose={() => setOpenModal(null)}
         />
       )}

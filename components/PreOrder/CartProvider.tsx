@@ -184,6 +184,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       queryClient.invalidateQueries({
         queryKey: ["bookings", bookingId, "my-pre-order"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["bookings", bookingId, "group-pre-order"],
+      });
     },
     onError: (error) => {
       rollback();

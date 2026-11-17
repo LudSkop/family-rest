@@ -63,7 +63,7 @@
 - [x] «Add Pre-Order» → меню в режимі передзамовлення для цього бронювання
 - [x] Вкладки-фільтри «All (N)» / «Upcoming» / …
 - [x] «Group Pre-Order» замість «Add Pre-Order» після відправки
-- [ ] ⏳ «Pre-orders: 4/4» — чекає API
+- [x] «Pre-orders: 2 of 3» на картці власника (`GET /group-pre-order`, 2026-11-18)
 - ~~«Leave Feedback» / «Update Feedback»~~ — відгуків у проєкті не буде (рішення 2026-11-16)
 
 ## Крок 9. Передзамовлення власника — частково ✅ (решта чекає API бекенда)
@@ -72,7 +72,7 @@
 - [x] «Cancel Changes» поруч із Submit (лише власник): з підтвердженням прибирає всі ще не відправлені страви
 - [x] Модалка «Pre-Order Submitted»: «Your Pre-Order was sent successfully. Wait for the confirmation from the restaurant.» + «View Reservations»
 - [x] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): «My Pre-Order», Subtotal, Grand Total
-- [ ] ⏳ Замовлення гостей у Group Pre-Order — чекає API
+- [x] Замовлення гостей у Group Pre-Order (`GET /group-pre-order`, 2026-11-18)
 - [x] Коментар до страви показується в кошику й Group Pre-Order
 - [x] Поле для введення коментаря — і для власника, і для гостя
 
@@ -120,7 +120,8 @@
 - [x] «Cancel Reservation»: тексти з Figma, «Keep it» (текстова) + «Cancel» (червона обводка), toast «Reservation Cancelled!»
 - [x] «Add Pre-Order» → «Group Pre-Order», щойно учасник відправив своє передзамовлення (`GET /my-pre-order`)
 - [x] Модалка «Group Pre-Order» (мітка «Sent to Restaurant»): лише блок «My Pre-Order» — однакові страви з різних відправлень разом; «Add more dishes» → меню
-- [ ] ⏳ Блоки гостей, «Remove Guest», статуси Confirmed / Rejected, «Pre-orders N/M» — чекають API бекенда
+- [x] Блоки гостей і «Pre-orders N/M» (2026-11-18)
+- [ ] ⏳ «Remove Guest», статуси Confirmed / Rejected — чекають API бекенда
 - [ ] Вкладки з підкресленням і окремою «In Progress» — макет позначений Backlog
 
 ## Сторінка персоналу «Booking Requests» ✅ (2026-11-16)
@@ -139,3 +140,12 @@
 - [x] «You're Invited!» показує статус: для запиту — жовта примітка й кнопка «Join Reservation»; після приєднання — «You've joined!» без режиму передзамовлення (воно відкриється після підтвердження)
 - [x] Картка в Reservations: «Joined: X of N» та імена учасників (власник — «(host)»)
 - Перевірено в браузері на підставлених даних: картки, Request Sent, перегляд запрошення PENDING/CONFIRMED, приєднання
+
+## Групове передзамовлення власника ✅ (2026-11-18)
+Бекенд: `GET /bookings/{id}/group-pre-order` — лише власнику; учасники (власник першим, далі гості за порядком приєднання) з відправленими частинами, сума кожного і загальна. Чернеток немає. Відкрито в будь-якому статусі.
+- [x] Route Handler + `getGroupPreOrder`, типи `GroupPreOrder`, `ParticipantPreOrder`
+- [x] Картка власника: «Pre-orders: N of M» (відправили / приєдналися); «Group Pre-Order», щойно хоч хтось відправив
+- [x] Модалка: «My Pre-Order» + блок кожного гостя (мітка Guest/Host), «Hasn't pre-ordered yet», Subtotal кожного, «N more guests haven't joined yet», Grand Total компанії
+- [x] Після початку / завершення бронювання власник може переглянути Group Pre-Order (без «Add more dishes»)
+- [x] Гість, як і раніше, бачить лише своє (`GET /my-pre-order`)
+- [x] Після Submit оновлюються і my-pre-order, і group-pre-order

@@ -21,6 +21,7 @@ import type {
   GroupPreOrder,
   MyPreOrder,
   SubmittedPart,
+  TableSlot,
   TablePage,
 } from "@/types/booking";
 
@@ -160,6 +161,37 @@ export const getBookings = async (): Promise<Booking[]> => {
 export const cancelBooking = async (bookingId: string): Promise<Booking> => {
   const { data } = await nextServer.post<Booking>(
     `/bookings/${encodeURIComponent(bookingId)}/cancel`,
+  );
+  return data;
+};
+
+export interface EditBookingParams {
+  bookingId: string;
+  starts_at: string;
+  party_size: number;
+  duration_minutes: number;
+}
+
+// Змінити час, кількість гостей і тривалість (день і стіл ті самі)
+export const editBooking = async ({
+  bookingId,
+  ...body
+}: EditBookingParams): Promise<Booking> => {
+  const { data } = await nextServer.put<Booking>(
+    `/bookings/${encodeURIComponent(bookingId)}`,
+    body,
+  );
+  return data;
+};
+
+// Куди можна перенести бронювання при такій тривалості
+export const getEditSlots = async (
+  bookingId: string,
+  durationMinutes: number,
+): Promise<TableSlot[]> => {
+  const { data } = await nextServer.get<TableSlot[]>(
+    `/bookings/${encodeURIComponent(bookingId)}/slots`,
+    { params: { duration_minutes: durationMinutes } },
   );
   return data;
 };

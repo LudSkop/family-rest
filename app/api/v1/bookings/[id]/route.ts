@@ -20,3 +20,20 @@ export async function GET(request: Request, { params }: Context) {
     return handleError(error);
   }
 }
+
+// Змінити своє підтверджене бронювання:
+// { starts_at, party_size, duration_minutes } — день і стіл лишаються
+export async function PUT(request: Request, { params }: Context) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const response = await api.put(
+      `/bookings/${encodeURIComponent(id)}`,
+      body,
+      { headers: cookieHeaders(request) },
+    );
+    return toNextResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}

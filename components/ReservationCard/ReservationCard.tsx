@@ -16,12 +16,14 @@ import {
   STATUS_LABELS,
   type ReservationStatus,
 } from "@/lib/utils/bookingStatus";
+import { INSTANT_BOOKING_LIMIT } from "@/components/ConfirmBookingModal/ConfirmBookingModal";
 import type { Booking, ParticipantPreOrder } from "@/types/booking";
 
 type Props = {
   booking: Booking;
   status: ReservationStatus;
   onCancel: (booking: Booking) => void;
+  onEdit: (booking: Booking) => void;
 };
 
 const Icon = ({ d }: { d: string }) => (
@@ -37,10 +39,11 @@ const ICONS = {
   guests:
     "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-6 9a6 6 0 0 1 12 0M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14a6 6 0 0 1 3 6",
   trash: "M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6",
+  pencil: "M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4ZM13.5 6.5l4 4",
 };
 
 // Картка бронювання (Figma «Reservations»): статус зверху, адреса, дата, час, гості
-const ReservationCard = ({ booking, status, onCancel }: Props) => {
+const ReservationCard = ({ booking, status, onCancel, onEdit }: Props) => {
   const router = useRouter();
   const { startPreOrder } = usePreOrder();
   const [openModal, setOpenModal] = useState<"invite" | "group" | null>(null);
@@ -50,6 +53,14 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
   // Запит ще не підтвердили: скасувати й запросити можна, передзамовлення — ні
   const isPending = status === "PENDING";
   const canManage = isOwner && (isUpcoming || isPending);
+
+  // Змінити можна лише підтверджене бронювання невеликої компанії;
+  // велике (5–8) — тільки скасувати
+  const canEdit =
+    isOwner &&
+    isUpcoming &&
+    booking.status === "CONFIRMED" &&
+    booking.party_size <= INSTANT_BOOKING_LIMIT;
 
   // «1 Guest = Owner»: запрошувати нікого — блоку «Invite Guests» немає (Figma).
   // Запросити можна і до підтвердження запиту великої компанії
@@ -133,16 +144,28 @@ const ReservationCard = ({ booking, status, onCancel }: Props) => {
             {booking.location.address}
           </h2>
 
-          {/* Скасувати може лише власник і лише майбутнє бронювання */}
+          {/* Змінити / скасувати може лише власник і лише майбутнє бронювання */}
           {canManage && (
-            <button
-              type="button"
-              className={css.trash}
-              onClick={() => onCancel(booking)}
-              aria-label="Cancel reservation"
-            >
-              <Icon d={ICONS.trash} />
-            </button>
+            <div className={css.tools}>
+              {canEdit && (
+                <button
+                  type="button"
+                  className={css.edit}
+                  onClick={() => onEdit(booking)}
+                  aria-label="Edit reservation"
+                >
+                  <Icon d={ICONS.pencil} />
+                </button>
+              )}
+              <button
+                type="button"
+                className={css.trash}
+                onClick={() => onCancel(booking)}
+                aria-label="Cancel reservation"
+              >
+                <Icon d={ICONS.trash} />
+              </button>
+            </div>
           )}
         </div>
 

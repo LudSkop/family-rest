@@ -9,6 +9,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import ButtonLink from "@/components/ButtonLink/ButtonLink";
 import ReservationCard from "@/components/ReservationCard/ReservationCard";
 import CancelBookingModal from "@/components/CancelBookingModal/CancelBookingModal";
+import EditBookingModal from "@/components/EditBookingModal/EditBookingModal";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { cancelBooking, getApiError, getBookings } from "@/lib/api/clientApi";
 import {
@@ -53,6 +54,7 @@ const Reservations = () => {
 
   const [tab, setTab] = useState<Tab>("ALL");
   const [toCancel, setToCancel] = useState<Booking | null>(null);
+  const [toEdit, setToEdit] = useState<Booking | null>(null);
   // «Зараз» фіксуємо при відкритті сторінки: від нього рахуються статуси
   const [now] = useState(() => Date.now());
 
@@ -201,11 +203,16 @@ const Reservations = () => {
                     booking={booking}
                     status={status}
                     onCancel={setToCancel}
+                    onEdit={setToEdit}
                   />
                 </li>
               ))}
           </ul>
         </section>
+      )}
+
+      {toEdit && (
+        <EditBookingModal booking={toEdit} onClose={() => setToEdit(null)} />
       )}
 
       {toCancel && (

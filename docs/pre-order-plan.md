@@ -149,3 +149,13 @@
 - [x] Після початку / завершення бронювання власник може переглянути Group Pre-Order (без «Add more dishes»)
 - [x] Гість, як і раніше, бачить лише своє (`GET /my-pre-order`)
 - [x] Після Submit оновлюються і my-pre-order, і group-pre-order
+
+## Edit Reservation ✅ (2026-11-18, без макета Figma — у стилі наявних модалок)
+Бекенд: `PUT /bookings/{id}` `{ starts_at, party_size, duration_minutes }`, `GET /bookings/{id}/slots?duration_minutes=`. День і стіл змінити не можна.
+- [x] Route Handlers: `PUT /bookings/[id]`, `GET /bookings/[id]/slots`; `editBooking`, `getEditSlots`
+- [x] ✏️ на картці — лише власнику, лише для підтвердженого майбутнього бронювання до 4 гостей (великі можна тільки скасувати)
+- [x] Модалка: Guests (не менше, ніж уже приєдналось; не більше 4 і місткості столу), Length of stay, сітка часу, Save Changes / Cancel
+- [x] Межі тривалості бекенд не називає → питаємо `/slots` для 1–5 год і показуємо лише ті, що він приймає
+- [x] Обраний час скидається, якщо при новій тривалості він уже не підходить
+- [x] Помилки за `code`: SLOT_UNAVAILABLE (оновлюємо сітку), OVERLAPPING_BOOKING, PARTY_BELOW_PARTICIPANTS, ENDS_AFTER_CLOSING…; EDIT_CLOSED / BOOKING_PENDING / LARGE_BOOKING_NOT_EDITABLE → пояснення замість форми
+- [x] Успіх → toast «Reservation Updated!», список оновлюється; режим передзамовлення підхоплює новий час

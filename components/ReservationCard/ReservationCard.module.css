@@ -78,6 +78,13 @@
   stroke-linejoin: round;
 }
 
+.tools {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.edit,
 .trash {
   display: flex;
   align-items: center;
@@ -88,6 +95,7 @@
   background-color: transparent;
 }
 
+.edit .icon,
 .trash .icon {
   width: 20px;
   height: 20px;
@@ -97,6 +105,10 @@
 
 .trash:hover .icon {
   stroke: var(--error);
+}
+
+.edit:hover .icon {
+  stroke: var(--accent);
 }
 
 /* «Share link…» + «Invite Guests» */

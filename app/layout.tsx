@@ -26,10 +26,26 @@ const roboto = Roboto({
   display: "swap",
 });
 
+const SITE_TITLE = "Family Rest | Food for the Whole Family";
+const SITE_DESCRIPTION =
+  "Discover delicious meals for the whole family. Choose your favorite food and enjoy a great dining experience together.";
+
 export const metadata: Metadata = {
-  title: "Family Rest | Food for the Whole Family",
-  description:
-    "Discover delicious meals for the whole family. Choose your favorite food and enjoy a great dining experience together.",
+  // Месенджерам потрібна повна адреса картинки прев'ю
+  metadataBase: new URL("https://family-rest.vercel.app"),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  // Прев'ю посилання (Telegram, Viber, Facebook…).
+  // Картинку бере з app/opengraph-image.jpg (1200×630) автоматично
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: "Family Rest",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

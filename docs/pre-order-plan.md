@@ -171,3 +171,15 @@
 - [x] Клік по сповіщенню → прочитане + перехід на Reservations; «Mark all as read»
 - [x] Перевіряємо нові кожні 60 с і при поверненні на вкладку; нове → toast і оновлений статус бронювань
 - [x] Мобільний: панель на всю ширину під хедером
+
+## AI-асистент ✅ (2026-11-19, без макета Figma — у стилі сайту)
+Контракт: `docs/assistant-frontend-task.md` у репозиторії бекенда (гілка feature/assistant-actions).
+- [x] Значок у хедері (де був 🔔) — бачать усі; не увійшов → `?auth=sign-in&assistant=open`, після входу чат відкривається сам; гість із запрошення (лише guest_token) значка не бачить
+- [x] Route Handlers `app/api/v1/assistant/*`: JSON — axios; `messages` і `apply` — потік через `fetch` без буферизації (`_utils/proxyStream.ts`), `maxDuration = 300`
+- [x] `lib/api/assistantStream.ts`: читання SSE з `response.body`, розбір блоків, які рвуться посеред частини; 401 → спільний refresh і повтор; Abort не вважається помилкою
+- [x] `hooks/useAssistantChat.ts`: остання розмова або «New chat» (нова створюється з першим питанням), thinking → chunk → action → done / error, 404 розмови → нова
+- [x] Панель праворуч (мобільний — на весь екран): привітання з підказками, бульбашки, «думає», Stop, історія розмов (Today / Earlier), New chat
+- [x] Картка підтвердження: Book / Cancel; APPLIED (посилання на Reservations, toast, оновлення списку), CANCELLED, EXPIRED (і на клієнті після expires_at), FAILED з причиною; нова картка скасовує попередню
+- [x] Банери: 429 «Chat is back at HH:MM» (текст лишається в полі), 503 недоступний, 401/403 → Sign In; email не підтверджений → «Verify Email»
+- [x] Вигляд у стилі сайту: паросток із логотипа як аватар, кремовий фон, бульбашки з градієнтом кнопок, картка як у Reservations (смужка статусу, іконки), кнопки як у «Book this table?»
+- [ ] Звірити вигляд з макетом Figma

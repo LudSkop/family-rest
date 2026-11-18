@@ -13,6 +13,11 @@ import type {
 } from "@/types/dish";
 import type { Location, LocationDetails } from "@/types/location";
 import type {
+  AssistantAction,
+  AssistantSession,
+  AssistantSessionDetail,
+} from "@/types/assistant";
+import type {
   Booking,
   BookingRequest,
   BookingRequestPage,
@@ -445,3 +450,51 @@ export const getApiError = (error: unknown): ApiError | null => {
 
 export const getApiStatus = (error: unknown) =>
   isAxiosError(error) ? error.response?.status : undefined;
+
+// ===== AI-асистент (JSON-маршрути; потокові — у assistantStream.ts) =====
+
+const assistantSessionPath = (sessionId: string) =>
+  `/assistant/sessions/${encodeURIComponent(sessionId)}`;
+
+export const getAssistantSessions = async (): Promise<AssistantSession[]> => {
+  const { data } = await nextServer.get<AssistantSession[]>(
+    "/assistant/sessions",
+  );
+  return data;
+};
+
+export const createAssistantSession = async (): Promise<AssistantSession> => {
+  const { data } = await nextServer.post<AssistantSession>(
+    "/assistant/sessions",
+  );
+  return data;
+};
+
+export const getAssistantSession = async (
+  sessionId: string,
+): Promise<AssistantSessionDetail> => {
+  const { data } = await nextServer.get<AssistantSessionDetail>(
+    assistantSessionPath(sessionId),
+  );
+  return data;
+};
+
+export const getAssistantAction = async (
+  sessionId: string,
+  actionId: string,
+): Promise<AssistantAction> => {
+  const { data } = await nextServer.get<AssistantAction>(
+    `${assistantSessionPath(sessionId)}/actions/${encodeURIComponent(actionId)}`,
+  );
+  return data;
+};
+
+export const cancelAssistantAction = async (
+  sessionId: string,
+  actionId: string,
+): Promise<AssistantAction> => {
+  const { data } = await nextServer.post<AssistantAction>(
+    `${assistantSessionPath(sessionId)}/actions/${encodeURIComponent(actionId)}/cancel`,
+  );
+  return data;
+};

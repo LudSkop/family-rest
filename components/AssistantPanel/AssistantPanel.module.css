@@ -1,0 +1,771 @@
+/*
+ * Панель праворуч на всю висоту, як кошик (CartDrawer).
+ * dialog.panel і dialog.panel > div сильніші за стилі Modal
+ */
+dialog.panel {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0 0 0 auto;
+  border-radius: 0;
+  background-color: var(--bg-yellow);
+  animation: slideIn 0.25s ease;
+}
+
+dialog.panel > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+/* ===== Шапка, як у кошика: біла, лінія знизу (× — з Modal) ===== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 52px 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--white);
+}
+
+/* Паросток із логотипа на світло-зеленому колі */
+.avatar,
+.smallAvatar,
+.welcomeAvatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--bg-green);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.avatar svg {
+  width: 24px;
+  height: 24px;
+}
+
+.smallAvatar {
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+}
+
+.smallAvatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.welcomeAvatar {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+}
+
+.welcomeAvatar svg {
+  width: 40px;
+  height: 40px;
+}
+
+.headerText {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.title {
+  overflow: hidden;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+/* На мобільному — просто «Assistant»: паросток поруч і так каже, чий він */
+.titleBrand {
+  display: none;
+}
+
+/* На мобільному лише назва — щоб шапка лишалась в один рядок */
+.subtitle {
+  display: none;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.iconBtn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.iconBtn:hover:not(:disabled),
+.iconBtn[aria-pressed="true"] {
+  background-color: var(--bg-green);
+  color: var(--accent-dark);
+}
+
+.iconBtn:disabled {
+  color: var(--placeholder);
+  cursor: not-allowed;
+}
+
+.iconBtn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== Розмова: кремовий фон, як сторінки сайту ===== */
+.body {
+  flex-grow: 1;
+  min-height: 0;
+  padding: 20px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.muted {
+  padding: 24px 0;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.userRow,
+.assistantRow {
+  display: flex;
+  gap: 8px;
+}
+
+.userRow {
+  justify-content: flex-end;
+}
+
+.messageColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  max-width: 85%;
+}
+
+.userRow .messageColumn {
+  align-items: flex-end;
+}
+
+.bubble {
+  max-width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bubbleText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Градієнт, як у головних кнопок сайту */
+.userBubble {
+  border-radius: 16px 16px 4px 16px;
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  color: var(--white);
+}
+
+/* Біла, з м'якою тінню, як картки */
+.assistantBubble {
+  border: 1px solid transparent;
+  border-radius: 16px 16px 16px 4px;
+  background-color: var(--white);
+  box-shadow: 0 4px 16px rgba(35, 35, 35, 0.04);
+  color: var(--text);
+}
+
+.failedBubble {
+  border-color: var(--error);
+}
+
+.failedNote,
+.stoppedNote {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.failedNote {
+  color: var(--error);
+}
+
+.stoppedNote {
+  color: var(--text-muted);
+}
+
+.inlineLink {
+  padding: 0;
+  background-color: transparent;
+  font: inherit;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.inlineLink:disabled {
+  color: var(--placeholder);
+}
+
+/* «Думає»: три точки */
+.typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px 0;
+  vertical-align: middle;
+}
+
+.bubbleText + .typing {
+  margin-top: 4px;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* ===== Порожня розмова ===== */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 8px 8px;
+  text-align: center;
+}
+
+.welcomeTitle {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.welcomeText {
+  max-width: 340px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Підказки — кнопки з обводкою, як «Invite Guests» */
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.suggestion {
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background-color: var(--white);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--accent);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.suggestion:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.suggestion:disabled {
+  border-color: var(--input-border);
+  color: var(--placeholder);
+  cursor: not-allowed;
+}
+
+/* ===== Історія розмов ===== */
+.historyGroup + .historyGroup {
+  margin-top: 20px;
+}
+
+.historyLabel {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.historyList {
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--white);
+  box-shadow: 0 4px 16px rgba(35, 35, 35, 0.04);
+}
+
+.historyList li + li {
+  border-top: 1px solid var(--border);
+}
+
+.historyItem {
+  width: 100%;
+  padding: 12px 16px;
+  overflow: hidden;
+  background-color: transparent;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-align: left;
+  text-overflow: ellipsis;
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.historyItem:hover,
+.historyItem[aria-current="true"] {
+  background-color: var(--success-bg);
+  color: var(--accent-dark);
+}
+
+/* ===== Картка підтвердження — як картка в Reservations ===== */
+.card {
+  width: 100%;
+  min-width: 248px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--white);
+  box-shadow: 0 4px 16px rgba(35, 35, 35, 0.04);
+  transition: opacity 0.2s ease;
+}
+
+.cardDimmed {
+  opacity: 0.6;
+}
+
+/* Смужка статусу: свій колір для кожного (кольори карток Reservations) */
+.cardStatus {
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text);
+}
+
+.cardPENDING .cardStatus {
+  background-color: #fbefc8;
+}
+
+.cardAPPLIED .cardStatus {
+  background-color: #dfefdc;
+}
+
+.cardCANCELLED .cardStatus,
+.cardEXPIRED .cardStatus {
+  background-color: #ececec;
+}
+
+.cardFAILED .cardStatus {
+  background-color: #f8e1e3;
+}
+
+.cardBody {
+  padding: 16px;
+}
+
+.cardTitle {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.cardFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardField {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.cardField dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardLabel {
+  min-width: 64px;
+  color: var(--text-muted);
+}
+
+.cardIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cardNotice {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #fbefc8;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.cardError {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: var(--error-bg);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--error);
+}
+
+.cardLink {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--accent);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.cardLink:hover {
+  border-color: var(--accent-dark);
+  color: var(--accent-dark);
+}
+
+.cardActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Кнопки сайту: градієнтна головна і з обводкою */
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.primary {
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  color: var(--white);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.secondary {
+  border: 1.4px solid var(--accent);
+  background-color: var(--white);
+  color: var(--accent);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--white);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* ===== Низ: повідомлення, поле вводу ===== */
+.footer {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--border);
+  background-color: var(--white);
+}
+
+/* Як банер помилки у формах входу */
+.notice {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  background-color: var(--error-bg);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--error);
+}
+
+.noticeLimit {
+  background-color: #fbefc8;
+  color: var(--text);
+}
+
+/* Як поля форм сайту: рамка 8px, жовта при фокусі */
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: var(--white);
+  transition: border-color 0.2s ease;
+}
+
+.composer:focus-within {
+  border-color: var(--focus);
+}
+
+.input {
+  flex-grow: 1;
+  max-height: 140px;
+  padding: 8px 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background-color: transparent;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.input::placeholder {
+  color: var(--placeholder);
+}
+
+.sendBtn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background: linear-gradient(
+    270.63deg,
+    var(--accent) 0.48%,
+    var(--accent-dark) 97.4%
+  );
+  color: var(--white);
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.sendBtn:disabled {
+  background: var(--input-border);
+  cursor: not-allowed;
+}
+
+.sendBtn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sendBtn rect {
+  fill: currentColor;
+  stroke: none;
+}
+
+.inputError {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--error);
+}
+
+.footnote {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ===== Email не підтверджений ===== */
+.state {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.stateTitle {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.stateText {
+  max-width: 300px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.panel,
+  .typing span {
+    animation: none;
+  }
+
+  .typing span {
+    opacity: 0.6;
+  }
+}
+
+@media (min-width: 768px) {
+  dialog.panel {
+    max-width: 480px;
+  }
+
+  .header {
+    padding: 16px 56px 16px 24px;
+  }
+
+  .title {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .subtitle {
+    display: block;
+  }
+
+  .titleBrand {
+    display: inline;
+  }
+
+  .body {
+    padding: 24px;
+  }
+
+  .footer {
+    padding: 16px 24px 20px;
+  }
+}
+
+@media (min-width: 1440px) {
+  dialog.panel {
+    max-width: 640px;
+  }
+}

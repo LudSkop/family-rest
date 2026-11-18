@@ -4,11 +4,12 @@ import css from "./Header.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GOOGLE_LOGIN_URL } from "@/components/GoogleButton/GoogleButton";
 import UserMenu from "@/components/UserMenu/UserMenu";
 import CartDrawer from "@/components/CartDrawer/CartDrawer";
+import AssistantLauncher from "@/components/AssistantLauncher/AssistantLauncher";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useIsStaff } from "@/hooks/useIsStaff";
@@ -155,6 +156,13 @@ const Header = () => {
                 guestActions
               )}
             </div>
+          )}
+
+          {/* AI-асистент: значок бачать усі, крім гостя з запрошення (лише guest_token) */}
+          {!isGuestPreOrder && (
+            <Suspense fallback={null}>
+              <AssistantLauncher onOpen={closeMenu} />
+            </Suspense>
           )}
 
           <button

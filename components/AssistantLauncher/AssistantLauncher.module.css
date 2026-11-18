@@ -1,0 +1,27 @@
+/* Як кнопка кошика поруч */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.button:hover,
+.button[aria-expanded="true"] {
+  color: var(--accent);
+}
+
+.button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

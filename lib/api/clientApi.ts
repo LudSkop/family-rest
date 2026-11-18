@@ -12,6 +12,7 @@ import type {
   DishSort,
 } from "@/types/dish";
 import type { Location, LocationDetails } from "@/types/location";
+import type { AppNotification, NotificationPage } from "@/types/notification";
 import type {
   Booking,
   BookingRequest,
@@ -445,3 +446,25 @@ export const getApiError = (error: unknown): ApiError | null => {
 
 export const getApiStatus = (error: unknown) =>
   isAxiosError(error) ? error.response?.status : undefined;
+
+// ===== Notifications =====
+
+export const getNotifications = async ({
+  unreadOnly = false,
+  limit = 20,
+  offset = 0,
+} = {}): Promise<NotificationPage> => {
+  const { data } = await nextServer.get<NotificationPage>("/notifications", {
+    params: { unread_only: unreadOnly, limit, offset },
+  });
+  return data;
+};
+
+export const markNotificationRead = async (
+  notificationId: string,
+): Promise<AppNotification> => {
+  const { data } = await nextServer.post<AppNotification>(
+    `/notifications/${encodeURIComponent(notificationId)}/read`,
+  );
+  return data;
+};

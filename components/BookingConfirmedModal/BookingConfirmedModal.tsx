@@ -70,9 +70,9 @@ const BookingConfirmedModal = ({ booking, onClose }: Props) => {
 
       {isPending && (
         <p className={css.lead}>
-          The restaurant will review your request soon. You&apos;ll get a
-          notification and an email once it&apos;s confirmed — then everyone can
-          pre-order. You can already invite your guests.
+          The restaurant will review your request soon. You&apos;ll get an email
+          once it&apos;s confirmed — then everyone can pre-order. You can
+          already invite your guests.
         </p>
       )}
 

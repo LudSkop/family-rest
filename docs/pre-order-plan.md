@@ -160,7 +160,10 @@
 - [x] Помилки за `code`: SLOT_UNAVAILABLE (оновлюємо сітку), OVERLAPPING_BOOKING, PARTY_BELOW_PARTICIPANTS, ENDS_AFTER_CLOSING…; EDIT_CLOSED / BOOKING_PENDING / LARGE_BOOKING_NOT_EDITABLE → пояснення замість форми
 - [x] Успіх → toast «Reservation Updated!», список оновлюється; режим передзамовлення підхоплює новий час
 
-## Сповіщення 🔔 ✅ (2026-11-18, без макета — за дзвіночком із макета Waiter View)
+## Сповіщення 🔔 — ❌ прибрано (2026-11-18)
+Бекенд видалив `/notifications`: тепер про підтвердження / відхилення запиту учасники отримують лише email. Дзвіночок, Route Handlers і типи видалено; тексти «notification and an email» → «an email». Код можна відновити з git, якщо ендпоінти повернуться.
+
+### Як було зроблено (історія)
 Бекенд: `GET /notifications` (`unread_only`, `limit` ≤ 50, `offset`), `POST /notifications/{id}/read`. Види: `BOOKING_REQUEST_APPROVED`, `BOOKING_REQUEST_REJECTED`.
 - [x] Route Handlers + `getNotifications`, `markNotificationRead`; типи в `types/notification.ts`
 - [x] 🔔 у хедері (лише хто увійшов) з жовтим лічильником непрочитаних, як у кошика

@@ -9,7 +9,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { GOOGLE_LOGIN_URL } from "@/components/GoogleButton/GoogleButton";
 import UserMenu from "@/components/UserMenu/UserMenu";
 import CartDrawer from "@/components/CartDrawer/CartDrawer";
-import NotificationBell from "@/components/NotificationBell/NotificationBell";
 import { useToast } from "@/components/Toast/ToastProvider";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useIsStaff } from "@/hooks/useIsStaff";
@@ -157,9 +156,6 @@ const Header = () => {
               )}
             </div>
           )}
-
-          {/* Сповіщення — лише для тих, хто увійшов */}
-          {user && <NotificationBell />}
 
           <button
             type="button"

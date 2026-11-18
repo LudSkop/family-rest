@@ -54,7 +54,7 @@ const ConfirmBookingModal = ({
       </h2>
       <p className={css.lead}>
         {isRequest
-          ? "Groups of 5–8 are booked by request: the restaurant will confirm it, and you'll get a notification and an email."
+          ? "Groups of 5–8 are booked by request: the restaurant will confirm it, and you'll get an email."
           : "Please check the details of your reservation."}
       </p>
 

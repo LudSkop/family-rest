@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Family Rest
 
-## Getting Started
+Сайт сімейного ресторану з онлайн-бронюванням столів, передзамовленням страв для всієї компанії та AI-асистентом.
 
-First, run the development server:
+**Демо:** https://family-rest.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Можливості
+
+- **Меню.** Фільтри за категоріями, сортування, картка страви з деталями.
+- **Локації.** Список ресторанів і модалка з інформацією про кожен.
+- **Бронювання столу.** Пошук вільних столів за датою, часом, кількістю гостей і локацією, підтвердження, зміна часу або кількості гостей, скасування.
+- **Великі компанії (5–8 гостей).** Бронювання через запит, який персонал підтверджує або відхиляє на сторінці `/staff/requests`.
+- **Запрошення.** Власник бронювання ділиться посиланням `/join/<code>`, і гості приєднуються з акаунтом або без нього.
+- **Передзамовлення.** Кожен учасник збирає свій кошик і відправляє його, а власник бачить замовлення всієї компанії.
+- **Акаунт.** Реєстрація з підтвердженням email кодом, вхід (зокрема через Google), відновлення пароля, «Мої бронювання».
+- **AI-асистент.** Чат, який відповідає потоком (SSE) і може пропонувати дії з бронюванням, а користувач їх підтверджує.
+
+## Технології
+
+- [Next.js 16](https://nextjs.org) (App Router) + React 19 + React Compiler
+- TypeScript
+- [TanStack Query](https://tanstack.com/query) — запити та кеш
+- Axios
+- CSS Modules
+- [Vitest](https://vitest.dev) — тести
+
+## Як це влаштовано
+
+Браузер не звертається до бекенда напряму. Усі запити йдуть на сервер Next.js (`/api/v1/...`), а він пересилає їх на бекенд за адресою з `API_URL`:
+
+```
+Браузер  →  Next.js /api/v1/*  →  бекенд (API_URL)
+            (Route Handlers)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Сесія зберігається в cookie, які ставить бекенд (`access_token`, `refresh_token`). JavaScript у браузері токенів не бачить.
+- Коли запит отримує `401`, клієнт один раз оновлює сесію (`/auth/refresh`) і повторює запит.
+- Для шляхів, для яких немає свого Route Handler, `next.config.ts` перенаправляє запит на бекенд як є. Так, наприклад, працює вхід через Google.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Запуск локально
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Потрібні **Node.js 20.9+** і доступ до бекенда Family Rest.
 
-## Learn More
+```bash
+# 1. Встановити залежності
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# 2. Створити файл зі змінними середовища
+cp .env.example .env.local
+#    і вписати в .env.local адресу бекенда
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 3. Запустити
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Сайт відкриється на http://localhost:3000.
 
-## Deploy on Vercel
+## Змінні середовища
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Змінна | Обов'язкова | Опис |
+|---|---|---|
+| `API_URL` | так | Адреса бекенда разом із `/api/v1`, без слеша в кінці. Наприклад: `https://your-backend.example.com/api/v1`. Використовується лише на сервері Next.js, у браузер не потрапляє. |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Шаблон лежить у [`.env.example`](.env.example). Справжні значення зберігайте в `.env.local`, бо цей файл не потрапляє в git. На Vercel ту саму змінну задають у **Settings → Environment Variables**.
+
+## Команди
+
+| Команда | Що робить |
+|---|---|
+| `npm run dev` | Запуск у режимі розробки |
+| `npm run build` | Продакшн-збірка |
+| `npm start` | Запуск зібраної версії |
+| `npm run lint` | Перевірка коду ESLint |
+| `npm test` | Тести в режимі спостереження (перезапуск після кожного збереження) |
+| `npm run test:run` | Прогнати тести один раз |
+
+## Тести
+
+Тести лежать поруч із кодом, який перевіряють, і мають суфікс `.test.ts`:
+
+```
+lib/utils/
+  formatPrice.ts
+  formatPrice.test.ts
+```
+
+## Структура проєкту
+
+```
+app/                 сторінки (App Router)
+  api/v1/            Route Handlers — посередник між браузером і бекендом
+  api/_utils/        спільні функції для них (cookie, помилки, потоки)
+components/          компоненти; у кожного своя папка з .tsx і .module.css
+hooks/               власні хуки (поточний користувач, чат асистента…)
+lib/api/             клієнт API для браузера
+lib/utils/           допоміжні функції (ціна, час, пароль…)
+types/               TypeScript-типи даних з бекенда
+public/              картинки та інші статичні файли
+```

@@ -30,12 +30,13 @@
 
 ```
 Браузер  →  Next.js /api/v1/*  →  бекенд (API_URL)
-            (Route Handlers)
+            (rewrite)
 ```
 
 - Сесія зберігається в cookie, які ставить бекенд (`access_token`, `refresh_token`). JavaScript у браузері токенів не бачить.
 - Коли запит отримує `401`, клієнт один раз оновлює сесію (`/auth/refresh`) і повторює запит.
-- Для шляхів, для яких немає свого Route Handler, `next.config.ts` перенаправляє запит на бекенд як є. Так, наприклад, працює вхід через Google.
+- Пересилає `fallback`-rewrite у `next.config.ts`: запит і відповідь проходять як є, включно з `Set-Cookie`, `Retry-After` і редиректом входу через Google.
+- Власні Route Handlers лишилися лише для потокових відповідей асистента (Server-Sent Events): у них `maxDuration = 300`, щоб Vercel не обірвав потік.
 
 ## Запуск локально
 
@@ -88,8 +89,8 @@ lib/utils/
 
 ```
 app/                 сторінки (App Router)
-  api/v1/            Route Handlers — посередник між браузером і бекендом
-  api/_utils/        спільні функції для них (cookie, помилки, потоки)
+  api/v1/            Route Handlers для потокових відповідей асистента
+  api/_utils/        спільні функції для них (cookie, потоки)
 components/          компоненти; у кожного своя папка з .tsx і .module.css
 hooks/               власні хуки (поточний користувач, чат асистента…)
 lib/api/             клієнт API для браузера

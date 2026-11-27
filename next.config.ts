@@ -16,8 +16,9 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return {
-      // Усе /api/v1/*, для чого немає нашого Route Handler, йде на бекенд як є.
-      // Потрібно для Google-входу: браузер має сам отримати 302 і cookie від API
+      // Усе /api/v1/* йде на бекенд як є: статус, тіло, cookie і заголовки без змін.
+      // Саме fallback, а не звичайний rewrite: він спрацьовує після динамічних
+      // маршрутів, тож потокові Route Handlers асистента лишаються першими
       fallback: [
         {
           source: "/api/v1/:path*",
